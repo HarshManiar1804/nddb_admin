@@ -16,9 +16,9 @@ exports.getAllImages = async (req, res, next) => {
     const values = [];
 
     // Filter by species if provided
-    if (req.query.speciesId) {
-      query = "SELECT * FROM Trees_Image WHERE SpeciesID = $1";
-      values.push(req.query.speciesId);
+    if (req.query.speciesid) {
+      query = "SELECT * FROM Trees_Image WHERE speciesid = $1";
+      values.push(req.query.speciesid);
     }
 
     // Filter by image type if provided
@@ -78,18 +78,18 @@ exports.getImageById = async (req, res, next) => {
  */
 exports.createImage = async (req, res, next) => {
   try {
-    const { speciesId, imageType, imageUrl } = req.body;
+    const { speciesid, imageType, imageUrl } = req.body;
 
     // Validate input
-    if (!speciesId || !imageUrl) {
+    if (!speciesid || !imageUrl) {
       return res.status(400).json({
         success: false,
-        error: "Please provide speciesId and imageUrl",
+        error: "Please provide speciesid and imageUrl",
       });
     }
 
     // Check if species exists
-    const speciesCheck = await db.getById("Species", speciesId);
+    const speciesCheck = await db.getById("Species", speciesid);
 
     if (speciesCheck.rows.length === 0) {
       return res.status(404).json({
@@ -99,7 +99,7 @@ exports.createImage = async (req, res, next) => {
     }
 
     const result = await db.insert("Trees_Image", {
-      speciesid: speciesId,
+      speciesid: speciesid,
       imagetype: imageType || null,
       imageurl: imageUrl,
     });
@@ -121,7 +121,7 @@ exports.createImage = async (req, res, next) => {
  */
 exports.updateImage = async (req, res, next) => {
   try {
-    const { speciesId, imageType, imageUrl } = req.body;
+    const { speciesid, imageType, imageUrl } = req.body;
     const imageId = req.params.id;
 
     // Check if image exists
@@ -137,9 +137,9 @@ exports.updateImage = async (req, res, next) => {
     // Prepare update data
     const updateData = {};
 
-    if (speciesId) {
+    if (speciesid) {
       // Check if species exists
-      const speciesCheck = await db.getById("Species", speciesId);
+      const speciesCheck = await db.getById("Species", speciesid);
 
       if (speciesCheck.rows.length === 0) {
         return res.status(404).json({
@@ -148,7 +148,7 @@ exports.updateImage = async (req, res, next) => {
         });
       }
 
-      updateData.speciesid = speciesId;
+      updateData.speciesid = speciesid;
     }
 
     if (imageType !== undefined) updateData.imagetype = imageType;
