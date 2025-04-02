@@ -135,18 +135,17 @@ exports.createSpecies = async (req, res, next) => {
       link: link || null,
       botanyId: botanyId,
       campusId: campusId || null,
-      createdBy: req.user ? req.user.id : null,
     };
 
     // Insert the species record
     const result = await db.query(
       `
       INSERT INTO Species (
-        TreeName, ScientificName, HindiName, CentreOfOrigin, 
-        GeographicalDistribution, IUCNStatus, TotalNDDBCampus, 
-        QRCode, Link, CreatedBy, BotanyID, CampusID
+        treename, scientificname, hindiname, centreoforigin, 
+        geographicaldistribution, iucnstatus, totalnddbcampus, 
+        qrcode, link, botanyid, campusid
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
       ) RETURNING *
     `,
       [
@@ -159,7 +158,6 @@ exports.createSpecies = async (req, res, next) => {
         userData.totalNDDBCampus,
         userData.qrCode,
         userData.link,
-        userData.createdBy,
         userData.botanyId,
         userData.campusId,
       ]

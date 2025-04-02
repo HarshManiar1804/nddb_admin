@@ -31,7 +31,7 @@ const treesImageRoutes = require("./routes/treesImageRoutes");
 // Mount routes
 app.use("/api/campus", campusRoutes); // done
 app.use("/api/botany", botanyRoutes); // done
-app.use("/api/species", speciesRoutes);
+app.use("/api/species", speciesRoutes); // done
 app.use("/api/trees-geolocation", treesGeolocationRoutes);
 app.use("/api/trees-image", treesImageRoutes);
 // app.use("/api/species-usage", speciesUsageRoutes);
