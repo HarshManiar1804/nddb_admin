@@ -10,98 +10,109 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { X, Pencil } from 'lucide-react';
+import { X, Pencil, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface botany {
+interface Botany {
     id: string;
     name: string;
 }
 
-interface botanyFormData {
+interface BotanyFormData {
     name: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Botany = () => {
-    const [botany, setbotany] = useState<botany[]>([]);
+    const [botanies, setBotanies] = useState<Botany[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [editbotany, setEditbotany] = useState<botany | null>(null);
+    const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
+    const [editingBotany, setEditingBotany] = useState<Botany | null>(null);
+    const [viewingBotany, setViewingBotany] = useState<Botany | null>(null);
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<botanyFormData>();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<BotanyFormData>();
 
     useEffect(() => {
-        fetchbotany();
+        fetchBotanies();
     }, []);
 
-    const fetchbotany = useCallback(async () => {
+    const fetchBotanies = useCallback(async () => {
         try {
             setLoading(true);
             const { data } = await axios.get(`${API_URL}/botany`);
-            setbotany(data.data);
+            setBotanies(data.data);
         } catch (error) {
-            console.error('Error fetching botany:', error);
+            console.error('Error fetching botanies:', error);
         } finally {
             setLoading(false);
         }
     }, []);
 
-    const handleSave = useCallback(async (data: botanyFormData) => {
+    const handleSave = useCallback(async (data: BotanyFormData) => {
         try {
-            if (editbotany) {
-                await axios.put(`${API_URL}/botany/${editbotany.id}`, data);
-                toast.success('botany updated successfully');
+            if (editingBotany) {
+                const confirmUpdate = window.confirm('Are you sure you want to update this botany?');
+                if (!confirmUpdate) return;
+                await axios.put(`${API_URL}/botany/${editingBotany.id}`, data);
+                toast.success('Botany updated successfully');
             } else {
                 await axios.post(`${API_URL}/botany`, data);
-                toast.success('botany added successfully');
+                toast.success('Botany added successfully');
             }
             setIsDrawerOpen(false);
             reset();
-            fetchbotany();
+            fetchBotanies();
         } catch (error) {
             toast.error('Failed to save botany');
         }
-    }, [editbotany, fetchbotany, reset]);
+    }, [editingBotany, fetchBotanies, reset]);
 
     const handleDelete = useCallback(async (id: string) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this botany?');
+        if (!confirmDelete) return;
         try {
             await axios.delete(`${API_URL}/botany/${id}`);
-            fetchbotany();
-            toast.success('botany deleted successfully');
+            fetchBotanies();
+            toast.success('Botany deleted successfully');
         } catch (error) {
             toast.error('Failed to delete botany');
         }
-    }, [fetchbotany]);
+    }, [fetchBotanies]);
 
     if (loading) {
-        return <div>Loading botany...</div>;
+        return <div>Loading botanies...</div>;
     }
 
     return (
         <div className="space-y-3">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">botany Management</h2>
+                <h2 className="text-2xl font-bold">Botany Management</h2>
                 <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                     <DrawerTrigger asChild>
-                        <Button onClick={() => setEditbotany(null)}>Add New botany</Button>
+                        <Button className="cursor-pointer" onClick={() => setEditingBotany(null)}>Add New Botany</Button>
                     </DrawerTrigger>
                     <DrawerContent>
                         <form onSubmit={handleSubmit(handleSave)}>
                             <DrawerHeader>
-                                <DrawerTitle>{editbotany ? 'Edit botany' : 'Add New botany'}</DrawerTitle>
-                                <DrawerDescription>{editbotany ? 'Update botany details.' : 'Enter botany details.'}</DrawerDescription>
+                                <DrawerTitle>{editingBotany ? 'Edit Botany' : 'Add New Botany'}</DrawerTitle>
+                                <DrawerDescription>{editingBotany ? 'Update botany details.' : 'Enter botany details.'}</DrawerDescription>
                             </DrawerHeader>
                             <div className="p-4 space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="name">botany Name</Label>
-                                    <Input id="name" {...register("name", { required: "botany name is required" })} defaultValue={editbotany?.name} placeholder="Enter botany name" />
+                                <div>
+                                    <Label htmlFor="name">Botany Name</Label>
+                                    <Input
+                                        id="name"
+                                        {...register("name", { required: "Botany name is required" })}
+                                        defaultValue={editingBotany?.name}
+                                        placeholder="Enter botany name"
+                                    />
                                     {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
                                 </div>
                             </div>
                             <DrawerFooter>
-                                <Button type="submit">{editbotany ? 'Update botany' : 'Add botany'}</Button>
+                                <Button type="submit">{editingBotany ? 'Update Botany' : 'Add Botany'}</Button>
                                 <DrawerClose asChild>
                                     <Button variant="outline" type="button">Cancel</Button>
                                 </DrawerClose>
@@ -110,32 +121,80 @@ const Botany = () => {
                     </DrawerContent>
                 </Drawer>
             </div>
+
+            {/* View Drawer */}
+            <Drawer open={isViewDrawerOpen} onOpenChange={setIsViewDrawerOpen}>
+                <DrawerContent>
+                    <DrawerHeader>
+                        <DrawerTitle>View Botany</DrawerTitle>
+                        <DrawerDescription>Details of selected botany.</DrawerDescription>
+                    </DrawerHeader>
+                    <div className="p-4 space-y-4">
+                        <div>
+                            <Label>Name</Label>
+                            <p className="text-lg">{viewingBotany?.name}</p>
+                        </div>
+                    </div>
+                    <DrawerFooter>
+                        <DrawerClose asChild>
+                            <Button variant="outline">Close</Button>
+                        </DrawerClose>
+                    </DrawerFooter>
+                </DrawerContent>
+            </Drawer>
+
             <Table>
-                <TableCaption>List of Available botany</TableCaption>
+                <TableCaption>List of Botanies</TableCaption>
                 <TableHeader>
                     <TableRow>
                         <TableHead>#</TableHead>
-                        <TableHead>botany Name</TableHead>
+                        <TableHead>Botany Name</TableHead>
+                        <TableHead>View</TableHead>
                         <TableHead>Edit</TableHead>
                         <TableHead>Delete</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {botany.map((item, index) => (
+                    {botanies.map((item, index) => (
                         <TableRow key={item.id}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell className="font-medium">{item.name}</TableCell>
-                            <TableCell className="flex gap-2">
-                                <Button onClick={() => { setEditbotany(item); setIsDrawerOpen(true); }}>
-                                    <Pencil size={16} />
+                            <TableCell>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        setViewingBotany(item);
+                                        setIsViewDrawerOpen(true);
+                                    }}
+                                >
+                                    <Eye className="h-4 w-4" />
                                 </Button>
                             </TableCell>
-                            <TableCell className=" ">
-                                <Button onClick={() => handleDelete(item.id)}>
-                                    <X size={16} />
+                            <TableCell>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        setEditingBotany(item);
+                                        setIsDrawerOpen(true);
+                                    }}
+                                >
+                                    <Pencil className="h-4 w-4" />
                                 </Button>
                             </TableCell>
-
+                            <TableCell>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="cursor-pointer text-red-500 hover:text-red-700"
+                                    onClick={() => handleDelete(item.id)}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

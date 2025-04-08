@@ -12,8 +12,7 @@ const db = require("../models/db");
  */
 exports.getAllCampuses = async (req, res, next) => {
   try {
-    const result = await db.getAll("Campus");
-
+    const result = await db.query(`SELECT * FROM Campus`);
     res.status(200).json({
       success: true,
       count: result.rows.length,

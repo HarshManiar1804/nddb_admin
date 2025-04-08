@@ -10,98 +10,109 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { X, Pencil } from 'lucide-react';
+import { X, Pencil, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface campus {
+interface Campus {
     id: string;
     name: string;
 }
 
-interface campusFormData {
+interface BotanyFormData {
     name: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Campus = () => {
-    const [campus, setcampus] = useState<campus[]>([]);
+    const [botanies, setBotanies] = useState<Campus[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [editcampus, setEditcampus] = useState<campus | null>(null);
+    const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
+    const [editingBotany, setEditingBotany] = useState<Campus | null>(null);
+    const [viewingBotany, setViewingBotany] = useState<Campus | null>(null);
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<campusFormData>();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<BotanyFormData>();
 
     useEffect(() => {
-        fetchcampus();
+        fetchBotanies();
     }, []);
 
-    const fetchcampus = useCallback(async () => {
+    const fetchBotanies = useCallback(async () => {
         try {
             setLoading(true);
             const { data } = await axios.get(`${API_URL}/campus`);
-            setcampus(data.data);
+            setBotanies(data.data);
         } catch (error) {
-            console.error('Error fetching campus:', error);
+            console.error('Error fetching botanies:', error);
         } finally {
             setLoading(false);
         }
     }, []);
 
-    const handleSave = useCallback(async (data: campusFormData) => {
+    const handleSave = useCallback(async (data: BotanyFormData) => {
         try {
-            if (editcampus) {
-                await axios.put(`${API_URL}/campus/${editcampus.id}`, data);
-                toast.success('campus updated successfully');
+            if (editingBotany) {
+                const confirmUpdate = window.confirm('Are you sure you want to update this botany?');
+                if (!confirmUpdate) return;
+                await axios.put(`${API_URL}/campus/${editingBotany.id}`, data);
+                toast.success('Campus updated successfully');
             } else {
                 await axios.post(`${API_URL}/campus`, data);
-                toast.success('campus added successfully');
+                toast.success('Campus added successfully');
             }
             setIsDrawerOpen(false);
             reset();
-            fetchcampus();
+            fetchBotanies();
         } catch (error) {
             toast.error('Failed to save campus');
         }
-    }, [editcampus, fetchcampus, reset]);
+    }, [editingBotany, fetchBotanies, reset]);
 
     const handleDelete = useCallback(async (id: string) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this campus?');
+        if (!confirmDelete) return;
         try {
             await axios.delete(`${API_URL}/campus/${id}`);
-            fetchcampus();
-            toast.success('campus deleted successfully');
+            fetchBotanies();
+            toast.success('Campus deleted successfully');
         } catch (error) {
             toast.error('Failed to delete campus');
         }
-    }, [fetchcampus]);
+    }, [fetchBotanies]);
 
     if (loading) {
-        return <div>Loading campus...</div>;
+        return <div>Loading botanies...</div>;
     }
 
     return (
         <div className="space-y-3">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">campus Management</h2>
+                <h2 className="text-2xl font-bold">Campus Management</h2>
                 <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                     <DrawerTrigger asChild>
-                        <Button onClick={() => setEditcampus(null)}>Add New campus</Button>
+                        <Button className="cursor-pointer" onClick={() => setEditingBotany(null)}>Add New Campus</Button>
                     </DrawerTrigger>
                     <DrawerContent>
                         <form onSubmit={handleSubmit(handleSave)}>
                             <DrawerHeader>
-                                <DrawerTitle>{editcampus ? 'Edit campus' : 'Add New campus'}</DrawerTitle>
-                                <DrawerDescription>{editcampus ? 'Update campus details.' : 'Enter campus details.'}</DrawerDescription>
+                                <DrawerTitle>{editingBotany ? 'Edit Campus' : 'Add New Campus'}</DrawerTitle>
+                                <DrawerDescription>{editingBotany ? 'Update campus details.' : 'Enter campus details.'}</DrawerDescription>
                             </DrawerHeader>
                             <div className="p-4 space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="name">campus Name</Label>
-                                    <Input id="name" {...register("name", { required: "campus name is required" })} defaultValue={editcampus?.name} placeholder="Enter campus name" />
+                                <div>
+                                    <Label htmlFor="name">Campus Name</Label>
+                                    <Input
+                                        id="name"
+                                        {...register("name", { required: "Campus name is required" })}
+                                        defaultValue={editingBotany?.name}
+                                        placeholder="Enter campus name"
+                                    />
                                     {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
                                 </div>
                             </div>
                             <DrawerFooter>
-                                <Button type="submit">{editcampus ? 'Update campus' : 'Add campus'}</Button>
+                                <Button type="submit">{editingBotany ? 'Update Campus' : 'Add Campus'}</Button>
                                 <DrawerClose asChild>
                                     <Button variant="outline" type="button">Cancel</Button>
                                 </DrawerClose>
@@ -110,32 +121,80 @@ const Campus = () => {
                     </DrawerContent>
                 </Drawer>
             </div>
+
+            {/* View Drawer */}
+            <Drawer open={isViewDrawerOpen} onOpenChange={setIsViewDrawerOpen}>
+                <DrawerContent>
+                    <DrawerHeader>
+                        <DrawerTitle>View Campus</DrawerTitle>
+                        <DrawerDescription>Details of selected campus.</DrawerDescription>
+                    </DrawerHeader>
+                    <div className="p-4 space-y-4">
+                        <div>
+                            <Label>Name</Label>
+                            <p className="text-lg">{viewingBotany?.name}</p>
+                        </div>
+                    </div>
+                    <DrawerFooter>
+                        <DrawerClose asChild>
+                            <Button variant="outline">Close</Button>
+                        </DrawerClose>
+                    </DrawerFooter>
+                </DrawerContent>
+            </Drawer>
+
             <Table>
-                <TableCaption>List of Available campus</TableCaption>
+                <TableCaption>List of Campus</TableCaption>
                 <TableHeader>
                     <TableRow>
                         <TableHead>#</TableHead>
-                        <TableHead>campus Name</TableHead>
+                        <TableHead>Campus Name</TableHead>
+                        <TableHead>View</TableHead>
                         <TableHead>Edit</TableHead>
                         <TableHead>Delete</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {campus.map((item, index) => (
+                    {botanies.map((item, index) => (
                         <TableRow key={item.id}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell className="font-medium">{item.name}</TableCell>
-                            <TableCell className="flex gap-2">
-                                <Button onClick={() => { setEditcampus(item); setIsDrawerOpen(true); }}>
-                                    <Pencil size={16} />
+                            <TableCell>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        setViewingBotany(item);
+                                        setIsViewDrawerOpen(true);
+                                    }}
+                                >
+                                    <Eye className="h-4 w-4" />
                                 </Button>
                             </TableCell>
-                            <TableCell className=" ">
-                                <Button onClick={() => handleDelete(item.id)}>
-                                    <X size={16} />
+                            <TableCell>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        setEditingBotany(item);
+                                        setIsDrawerOpen(true);
+                                    }}
+                                >
+                                    <Pencil className="h-4 w-4" />
                                 </Button>
                             </TableCell>
-
+                            <TableCell>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="cursor-pointer text-red-500 hover:text-red-700"
+                                    onClick={() => handleDelete(item.id)}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

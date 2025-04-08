@@ -84,4 +84,9 @@ export const routes = [
     name: "Tree Image",
     icon: BarChart,
   },
+  {
+    path: "/species-usage",
+    name: "Species Usage",
+    icon: BarChart,
+  },
 ];

@@ -25,8 +25,7 @@ const botanyRoutes = require("./routes/botanyRoutes");
 const speciesRoutes = require("./routes/speciesRoutes");
 const treesGeolocationRoutes = require("./routes/treesGeolocationRoutes");
 const treesImageRoutes = require("./routes/treesImageRoutes");
-// const speciesUsageRoutes = require("./routes/speciesUsageRoutes");
-// const speciesSymbolsRoutes = require("./routes/speciesSymbolsRoutes");
+const speciesUsageRoutes = require("./routes/speciesUsageRoutes");
 
 // Mount routes
 app.use("/api/campus", campusRoutes); // done
@@ -34,8 +33,7 @@ app.use("/api/botany", botanyRoutes); // done
 app.use("/api/species", speciesRoutes); // done
 app.use("/api/trees-geolocation", treesGeolocationRoutes); //done
 app.use("/api/trees-image", treesImageRoutes); // done
-// app.use("/api/species-usage", speciesUsageRoutes);
-// app.use("/api/species-symbols", speciesSymbolsRoutes);
+app.use("/api/species-usage", speciesUsageRoutes);
 
 // Basic route
 app.get("/", (req, res) => {

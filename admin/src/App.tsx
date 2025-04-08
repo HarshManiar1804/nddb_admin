@@ -9,6 +9,7 @@ import Campus from "./pages/Campus";
 import Species from "./pages/Species";
 import TreeLocation from "./pages/TreeLocation";
 import TreeImage from "./pages/TreeImage";
+import SpeciesUsage from "./pages/SpeciesUsage";
 
 // Layout component to maintain consistent structure
 const Layout = () => {
@@ -37,6 +38,7 @@ function App() {
           <Route path="/species" element={<Species />} />
           <Route path="/tree-geolocation" element={<TreeLocation />} />
           <Route path="/tree-image" element={<TreeImage />} />
+          <Route path="/species-usage" element={<SpeciesUsage />} />
         </Route>
       </Routes>
     </Router>

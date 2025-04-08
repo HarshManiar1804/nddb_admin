@@ -2,28 +2,15 @@ import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+    Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
+    Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { X, Pencil } from 'lucide-react';
+import { X, Pencil, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface TreeImage {
@@ -64,6 +51,8 @@ const TreeImage = () => {
     const createOrUpdateTreeImage = useCallback(async (imageData: TreeImageFormData) => {
         try {
             if (editingImage) {
+                const confirmUpdate = window.confirm('Are you sure you want to update this Tree image?');
+                if (!confirmUpdate) return;
                 await axios.put(`${API_URL}/trees-image/${editingImage.id}`, imageData);
                 toast.success('Tree image updated successfully');
             } else {
@@ -89,6 +78,8 @@ const TreeImage = () => {
     };
 
     const handleDelete = useCallback(async (id: number) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this Tree Image?');
+        if (!confirmDelete) return;
         try {
             await axios.delete(`${API_URL}/trees-image/${id}`);
             fetchTreeImages();
@@ -109,9 +100,9 @@ const TreeImage = () => {
                 <h2 className="text-2xl font-bold">Tree Images Management</h2>
                 <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                     <DrawerTrigger asChild>
-                        <Button className='cursor-pointer' onClick={() => setEditingImage(null)}>Add New Tree Image</Button>
+                        <Button onClick={() => setEditingImage(null)}>Add New Tree Image</Button>
                     </DrawerTrigger>
-                    <DrawerContent className='overflow-y-auto'>
+                    <DrawerContent className="overflow-y-auto">
                         <form onSubmit={handleSubmit(createOrUpdateTreeImage)}>
                             <DrawerHeader>
                                 <DrawerTitle>{editingImage ? 'Edit Tree Image' : 'Add New Tree Image'}</DrawerTitle>
@@ -130,9 +121,9 @@ const TreeImage = () => {
                                 {errors.imageurl && <p className="text-sm text-red-500">Image URL is required</p>}
                             </div>
                             <DrawerFooter>
-                                <Button type="submit" className='cursor-pointer'>{editingImage ? 'Update Image' : 'Add Image'}</Button>
+                                <Button type="submit">{editingImage ? 'Update Image' : 'Add Image'}</Button>
                                 <DrawerClose asChild>
-                                    <Button variant="outline" type="button" className='cursor-pointer'>Cancel</Button>
+                                    <Button variant="outline" type="button">Cancel</Button>
                                 </DrawerClose>
                             </DrawerFooter>
                         </form>
@@ -147,6 +138,7 @@ const TreeImage = () => {
                         <TableHead>Species ID</TableHead>
                         <TableHead>Image Type</TableHead>
                         <TableHead>Image</TableHead>
+                        <TableHead>View</TableHead>
                         <TableHead>Edit</TableHead>
                         <TableHead>Delete</TableHead>
                     </TableRow>
@@ -161,14 +153,24 @@ const TreeImage = () => {
                                 <img src={img.imageurl} alt="Tree" className="w-20 h-20 object-cover" />
                             </TableCell>
                             <TableCell>
-                                <Button className='cursor-pointer' onClick={() => handleEdit(img)}>
-                                    <Pencil />
+                                <Button
+                                    variant="outline"
+                                    onClick={() => window.open(img.imageurl, '_blank')}>
+                                    <Eye size={16} />
                                 </Button>
                             </TableCell>
                             <TableCell>
-
-                                <Button className='cursor-pointer' onClick={() => handleDelete(img.id)}>
-                                    <X />
+                                <Button
+                                    variant="outline"
+                                    onClick={() => handleEdit(img)}>
+                                    <Pencil size={16} />
+                                </Button>
+                            </TableCell>
+                            <TableCell>
+                                <Button
+                                    variant="outline" size="sm" className='cursor-pointer text-red-500 hover:text-red-700'
+                                    onClick={() => handleDelete(img.id)}>
+                                    <X size={16} />
                                 </Button>
                             </TableCell>
                         </TableRow>

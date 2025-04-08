@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { X, Pencil } from 'lucide-react';
+import { X, Pencil, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface TreeGeolocation {
@@ -32,7 +32,9 @@ const TreeLocation = () => {
     const [geolocations, setGeolocations] = useState<TreeGeolocation[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
     const [editGeolocation, setEditGeolocation] = useState<TreeGeolocation | null>(null);
+    const [viewGeolocation, setViewGeolocation] = useState<TreeGeolocation | null>(null);
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<TreeGeolocationFormData>();
 
@@ -55,6 +57,8 @@ const TreeLocation = () => {
     const handleSave = useCallback(async (data: TreeGeolocationFormData) => {
         try {
             if (editGeolocation) {
+                const confirmUpdate = window.confirm('Are you sure you want to update this Tree location?');
+                if (!confirmUpdate) return;
                 await axios.put(`${API_URL}/trees-geolocation/${editGeolocation.id}`, data);
                 toast.success('Geolocation updated successfully');
             } else {
@@ -70,6 +74,8 @@ const TreeLocation = () => {
     }, [editGeolocation, fetchGeolocations, reset]);
 
     const handleDelete = useCallback(async (id: string) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this Tree location?');
+        if (!confirmDelete) return;
         try {
             await axios.delete(`${API_URL}/trees-geolocation/${id}`);
             fetchGeolocations();
@@ -124,6 +130,36 @@ const TreeLocation = () => {
                     </DrawerContent>
                 </Drawer>
             </div>
+
+            {/* View Drawer */}
+            <Drawer open={isViewDrawerOpen} onOpenChange={setIsViewDrawerOpen}>
+                <DrawerContent>
+                    <DrawerHeader>
+                        <DrawerTitle>View Geolocation</DrawerTitle>
+                        <DrawerDescription>Details of selected geolocation.</DrawerDescription>
+                    </DrawerHeader>
+                    <div className="p-4 space-y-4">
+                        <div>
+                            <Label>Species ID</Label>
+                            <p className="text-lg">{viewGeolocation?.speciesid}</p>
+                        </div>
+                        <div>
+                            <Label>Longitude</Label>
+                            <p className="text-lg">{viewGeolocation?.longitude}</p>
+                        </div>
+                        <div>
+                            <Label>Latitude</Label>
+                            <p className="text-lg">{viewGeolocation?.latitude}</p>
+                        </div>
+                    </div>
+                    <DrawerFooter>
+                        <DrawerClose asChild>
+                            <Button variant="outline">Close</Button>
+                        </DrawerClose>
+                    </DrawerFooter>
+                </DrawerContent>
+            </Drawer>
+
             <Table>
                 <TableCaption>List of Tree Geolocations</TableCaption>
                 <TableHeader>
@@ -132,6 +168,7 @@ const TreeLocation = () => {
                         <TableHead>Species ID</TableHead>
                         <TableHead>Longitude</TableHead>
                         <TableHead>Latitude</TableHead>
+                        <TableHead>View</TableHead>
                         <TableHead>Edit</TableHead>
                         <TableHead>Delete</TableHead>
                     </TableRow>
@@ -144,12 +181,34 @@ const TreeLocation = () => {
                             <TableCell>{item.longitude}</TableCell>
                             <TableCell>{item.latitude}</TableCell>
                             <TableCell>
-                                <Button onClick={() => { setEditGeolocation(item); setIsDrawerOpen(true); }}>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        setViewGeolocation(item);
+                                        setIsViewDrawerOpen(true);
+                                    }}
+                                >
+                                    <Eye size={16} />
+                                </Button>
+                            </TableCell>
+                            <TableCell>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        setEditGeolocation(item);
+                                        setIsDrawerOpen(true);
+                                    }}
+                                >
                                     <Pencil size={16} />
                                 </Button>
                             </TableCell>
                             <TableCell>
-                                <Button onClick={() => handleDelete(item.id)}>
+                                <Button
+                                    variant="outline" size="sm" className='cursor-pointer text-red-500 hover:text-red-700'
+                                    onClick={() => handleDelete(item.id)}
+                                >
                                     <X size={16} />
                                 </Button>
                             </TableCell>

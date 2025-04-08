@@ -23,7 +23,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { X } from 'lucide-react';
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { X, Pencil, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Species {
@@ -35,26 +37,45 @@ interface Species {
     geographicaldistribution?: string;
     iucnstatus?: string;
     totalnddbcampus: number;
-    qrcode?: string | null;
+    qrcode?: string;
     link?: string;
     isactive: boolean;
     botanyid: number;
-    campusid: number;
+    campusid?: number;
+    botany_name?: string;
+    campus_name?: string;
 }
 
-interface SpeciesFormData extends Omit<Species, 'id' | 'isactive'> { }
+interface SpeciesFormData extends Omit<Species, 'id' | 'botany_name' | 'campus_name'> { }
+
+interface Botany {
+    id: number;
+    name: string;
+}
+
+interface Campus {
+    id: number;
+    name: string;
+}
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-const SpeciesManagement = () => {
+const Species = () => {
     const [species, setSpecies] = useState<Species[]>([]);
+    const [botanies, setBotanies] = useState<Botany[]>([]);
+    const [campuses, setCampuses] = useState<Campus[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
+    const [editingSpecies, setEditingSpecies] = useState<Species | null>(null);
+    const [viewingSpecies, setViewingSpecies] = useState<any | null>(null);
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<SpeciesFormData>();
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<SpeciesFormData>();
 
     useEffect(() => {
         fetchSpecies();
+        fetchBotanies();
+        fetchCampuses();
     }, []);
 
     const fetchSpecies = useCallback(async () => {
@@ -64,34 +85,85 @@ const SpeciesManagement = () => {
             setSpecies(data.data);
         } catch (error) {
             console.error('Error fetching species:', error);
+            toast.error('Failed to fetch species');
         } finally {
             setLoading(false);
         }
     }, []);
 
-    const createSpecies = useCallback(async (speciesData: SpeciesFormData) => {
+    const fetchBotanies = useCallback(async () => {
         try {
-            const response = await axios.post(`${API_URL}/species`, speciesData);
-            toast.success('Species added successfully');
-            return response.data;
+            const { data } = await axios.get(`${API_URL}/botany`);
+            setBotanies(data.data);
         } catch (error) {
-            console.error('Error adding species:', error);
-            throw new Error('Failed to add species');
+            console.error('Error fetching botanies:', error);
         }
     }, []);
 
-    const onSubmit = useCallback(async (data: SpeciesFormData) => {
+    const fetchCampuses = useCallback(async () => {
         try {
-            await createSpecies(data);
+            const { data } = await axios.get(`${API_URL}/campus`);
+            setCampuses(data.data);
+        } catch (error) {
+            console.error('Error fetching campuses:', error);
+        }
+    }, []);
+
+    const createOrUpdateSpecies = useCallback(async (speciesData: SpeciesFormData) => {
+        try {
+            if (editingSpecies) {
+                const confirmUpdate = window.confirm('Are you sure you want to update this species?');
+                if (!confirmUpdate) return;
+                await axios.put(`${API_URL}/species/${editingSpecies.id}`, speciesData);
+                toast.success('Species updated successfully');
+            } else {
+                await axios.post(`${API_URL}/species`, speciesData);
+                toast.success('Species added successfully');
+            }
             setIsDrawerOpen(false);
             reset();
             fetchSpecies();
+            setEditingSpecies(null);
         } catch (error) {
-            toast.error('Failed to add species');
+            console.error('Error saving species:', error);
+            toast.error('Failed to save species');
         }
-    }, [createSpecies, fetchSpecies, reset]);
+    }, [editingSpecies, fetchSpecies, reset]);
+
+    const handleEdit = (spec: Species) => {
+        setEditingSpecies(spec);
+        setValue('treename', spec.treename);
+        setValue('scientificname', spec.scientificname);
+        setValue('hindiname', spec.hindiname || '');
+        setValue('centreoforigin', spec.centreoforigin || '');
+        setValue('geographicaldistribution', spec.geographicaldistribution || '');
+        setValue('iucnstatus', spec.iucnstatus || '');
+        setValue('totalnddbcampus', spec.totalnddbcampus);
+        setValue('qrcode', spec.qrcode || '');
+        setValue('link', spec.link || '');
+        setValue('isactive', spec.isactive);
+        setValue('botanyid', spec.botanyid);
+        setValue('campusid', spec.campusid || 0);
+        setIsDrawerOpen(true);
+    };
+
+    const handleView = async (speciesId: number) => {
+        try {
+            setLoading(true);
+            const { data } = await axios.get(`${API_URL}/species/${speciesId}`);
+            setViewingSpecies(data.data);
+            setIsViewDrawerOpen(true);
+        } catch (error) {
+            console.error('Error fetching species details:', error);
+            toast.error('Failed to fetch species details');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleDelete = useCallback(async (id: number) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this species?');
+        if (!confirmDelete) return;
         try {
             await axios.delete(`${API_URL}/species/${id}`);
             fetchSpecies();
@@ -102,67 +174,303 @@ const SpeciesManagement = () => {
         }
     }, [fetchSpecies]);
 
-    if (loading) {
-        return <div>Loading species...</div>;
+    const handleAddNewSpecies = () => {
+        setEditingSpecies(null);
+        reset({
+            treename: '',
+            scientificname: '',
+            hindiname: '',
+            centreoforigin: '',
+            geographicaldistribution: '',
+            iucnstatus: '',
+            totalnddbcampus: 0,
+            qrcode: '',
+            link: '',
+            isactive: true,
+            botanyid: botanies.length > 0 ? botanies[0].id : 0,
+            campusid: 0
+        });
+        setIsDrawerOpen(true);
+    };
+
+    if (loading && species.length === 0) {
+        return <div>Loading species data...</div>;
     }
 
     return (
-        <div className="space-y-3">
+        <div>
             <div className="flex items-center justify-between">
-
                 <h2 className="text-2xl font-bold">Species Management</h2>
-                <div className="flex justify-between items-center mb-4">
-                    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                        <DrawerTrigger asChild>
-                            <Button className='cursor-pointer'>Add New Species</Button>
-                        </DrawerTrigger>
-                        <DrawerContent className='overflow-y-auto'>
-                            <form onSubmit={handleSubmit(onSubmit)}>
-                                <DrawerHeader>
-                                    <DrawerTitle>Add New Species</DrawerTitle>
-                                    <DrawerDescription>Enter species details.</DrawerDescription>
-                                </DrawerHeader>
-                                <div className="p-4">
-                                    {[
-                                        "treename", "scientificname", "hindiname", "centreoforigin", "geographicaldistribution", "iucnstatus", "totalnddbcampus", "qrcode", "link", "botanyid", "campusid"
-                                    ].map((field) => (
-                                        <div key={field} className="space-y-2">
-                                            <Label htmlFor={field}>{field.replace(/([a-z])([A-Z])/g, '$1 $2')}</Label>
-                                            <Input id={field} {...register(field as keyof SpeciesFormData, { required: field !== "hindiname" && field !== "qrcode" })} placeholder={`Enter ${field}`} />
-                                            {errors[field as keyof SpeciesFormData] && <p className="text-sm text-red-500">{`${field} is required`}</p>}
-                                        </div>
-                                    ))}
+                <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                    <DrawerTrigger asChild>
+                        <Button className='cursor-pointer' onClick={handleAddNewSpecies}>Add New Species</Button>
+                    </DrawerTrigger>
+                    <DrawerContent >
+                        <form onSubmit={handleSubmit(createOrUpdateSpecies)}>
+                            <DrawerHeader>
+                                <DrawerTitle>{editingSpecies ? 'Edit Species' : 'Add New Species'}</DrawerTitle>
+                                <DrawerDescription>Enter species details.</DrawerDescription>
+                            </DrawerHeader>
+                            <div className="p-1 space-y-3">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <Label htmlFor="treename">Tree Name</Label>
+                                        <Input
+                                            id="treename"
+                                            {...register("treename", { required: true })}
+                                            placeholder="Enter Tree Name"
+                                        />
+                                        {errors.treename && <p className="text-sm text-red-500">Tree Name is required</p>}
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="scientificname">Scientific Name</Label>
+                                        <Input
+                                            id="scientificname"
+                                            {...register("scientificname", { required: true })}
+                                            placeholder="Enter Scientific Name"
+                                        />
+                                        {errors.scientificname && <p className="text-sm text-red-500">Scientific Name is required</p>}
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="hindiname">Hindi Name</Label>
+                                        <Input
+                                            id="hindiname"
+                                            {...register("hindiname")}
+                                            placeholder="Enter Hindi Name"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="centreoforigin">Centre of Origin</Label>
+                                        <Input
+                                            id="centreoforigin"
+                                            {...register("centreoforigin")}
+                                            placeholder="Enter Centre of Origin"
+                                        />
+                                    </div>
+
+                                    <div className="md:col-span-2">
+                                        <Label htmlFor="geographicaldistribution">Geographical Distribution</Label>
+                                        <Textarea
+                                            id="geographicaldistribution"
+                                            {...register("geographicaldistribution")}
+                                            placeholder="Enter Geographical Distribution"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="iucnstatus">IUCN Status</Label>
+                                        <Input
+                                            id="iucnstatus"
+                                            {...register("iucnstatus")}
+                                            placeholder="Enter IUCN Status"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="totalnddbcampus">Total NDDB Campus</Label>
+                                        <Input
+                                            type="number"
+                                            id="totalnddbcampus"
+                                            {...register("totalnddbcampus", {
+                                                valueAsNumber: true,
+                                                min: 0
+                                            })}
+                                            placeholder="Enter Total NDDB Campus"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="qrcode">QR Code</Label>
+                                        <Input
+                                            id="qrcode"
+                                            {...register("qrcode")}
+                                            placeholder="Enter QR Code URL"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="link">Link</Label>
+                                        <Input
+                                            id="link"
+                                            {...register("link")}
+                                            placeholder="Enter Link"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="botanyid">Botany</Label>
+                                        <select
+                                            id="botanyid"
+                                            {...register("botanyid", {
+                                                required: true,
+                                                valueAsNumber: true
+                                            })}
+                                            className="w-full p-2 border rounded"
+                                        >
+                                            {botanies.map(botany => (
+                                                <option key={botany.id} value={botany.id}>
+                                                    {botany.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.botanyid && <p className="text-sm text-red-500">Botany is required</p>}
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="campusid">Campus</Label>
+                                        <select
+                                            id="campusid"
+                                            {...register("campusid", {
+                                                valueAsNumber: true
+                                            })}
+                                            className="w-full p-2 border rounded"
+                                        >
+                                            <option value={0}>None</option>
+                                            {campuses.map(campus => (
+                                                <option key={campus.id} value={campus.id}>
+                                                    {campus.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="flex items-center space-x-2">
+                                        <Label htmlFor="isactive">Active Status</Label>
+                                        <Switch
+                                            id="isactive"
+                                            {...register("isactive")}
+                                        />
+                                    </div>
                                 </div>
-                                <DrawerFooter>
-                                    <Button type="submit" className='cursor-pointer'>Add Species</Button>
-                                    <DrawerClose asChild>
-                                        <Button variant="outline" type="button" className='cursor-pointer'>Cancel</Button>
-                                    </DrawerClose>
-                                </DrawerFooter>
-                            </form>
-                        </DrawerContent>
-                    </Drawer>
-                </div>
+                            </div>
+
+                            <DrawerFooter>
+
+                                <Button type="submit" className='cursor-pointer'>{editingSpecies ? 'Update Species' : 'Add Species'}</Button>
+                                <DrawerClose >
+                                    <Button variant="outline" type="button" className='cursor-pointer w-full'>Cancel</Button>
+                                </DrawerClose>
+                            </DrawerFooter>
+                        </form>
+                    </DrawerContent>
+                </Drawer>
+
+                {/* View Species Details Drawer */}
+                <Drawer open={isViewDrawerOpen} onOpenChange={setIsViewDrawerOpen}>
+                    <DrawerContent >
+                        <DrawerHeader>
+                            <DrawerTitle>Species Details</DrawerTitle>
+                            <DrawerDescription>Viewing detailed information for this species.</DrawerDescription>
+                        </DrawerHeader>
+                        {viewingSpecies && (
+                            <div className="p-2 space-y-4">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <h3 className="font-bold">Tree Name</h3>
+                                        <p>{viewingSpecies.treename}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">Scientific Name</h3>
+                                        <p>{viewingSpecies.scientificname}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">Hindi Name</h3>
+                                        <p>{viewingSpecies.hindiname || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">Centre of Origin</h3>
+                                        <p>{viewingSpecies.centreoforigin || 'N/A'}</p>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <h3 className="font-bold">Geographical Distribution</h3>
+                                        <p>{viewingSpecies.geographicaldistribution || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">IUCN Status</h3>
+                                        <p>{viewingSpecies.iucnstatus || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">Total NDDB Campus</h3>
+                                        <p>{viewingSpecies.totalnddbcampus}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">QR Code</h3>
+                                        <p>{viewingSpecies.qrcode || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">Link</h3>
+                                        <p>{viewingSpecies.link || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">Botany</h3>
+                                        <p>{viewingSpecies.botany_name}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">Campus</h3>
+                                        <p>{viewingSpecies.campus_name || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">Status</h3>
+                                        <p>{viewingSpecies.isactive ? 'Active' : 'Inactive'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <DrawerFooter>
+                            <DrawerClose asChild>
+                                <Button variant="outline" type="button" className='cursor-pointer'>Close</Button>
+                            </DrawerClose>
+                        </DrawerFooter>
+                    </DrawerContent>
+                </Drawer>
             </div>
+
             <Table>
-                <TableCaption>List of Available Species</TableCaption>
+                <TableCaption>List of Species</TableCaption>
                 <TableHeader>
                     <TableRow>
                         <TableHead>#</TableHead>
-                        <TableHead>Species Name</TableHead>
+                        <TableHead>Tree Name</TableHead>
                         <TableHead>Scientific Name</TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead>Hindi Name</TableHead>
+                        <TableHead>Botany</TableHead>
+                        <TableHead>Campus</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>View</TableHead>
+                        <TableHead>Edit</TableHead>
+                        <TableHead>Delete</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {species.map((sp, index) => (
-                        <TableRow key={sp.id}>
+                    {species.map((spec, index) => (
+                        <TableRow key={spec.id}>
                             <TableCell>{index + 1}</TableCell>
-                            <TableCell className="font-medium">{sp.treename}</TableCell>
-                            <TableCell>{sp.scientificname}</TableCell>
+                            <TableCell>{spec.treename}</TableCell>
+                            <TableCell><span className="italic">{spec.scientificname}</span></TableCell>
+                            <TableCell>{spec.hindiname || 'N/A'}</TableCell>
+                            <TableCell>{spec.botany_name}</TableCell>
+                            <TableCell>{spec.campus_name || 'N/A'}</TableCell>
                             <TableCell>
-                                <Button className='cursor-pointer' onClick={() => handleDelete(sp.id)}>
-                                    <X />
+                                <span className={`px-2 py-1 rounded text-xs ${spec.isactive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                    {spec.isactive ? 'Active' : 'Inactive'}
+                                </span>
+                            </TableCell>
+                            <TableCell>
+                                <Button variant="outline" size="sm" className='cursor-pointer' onClick={() => handleView(spec.id)}>
+                                    <Eye className="h-4 w-4" />
+                                </Button>
+                            </TableCell>
+                            <TableCell>
+                                <Button variant="outline" size="sm" className='cursor-pointer' onClick={() => handleEdit(spec)}>
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                            </TableCell>
+                            <TableCell>
+                                <Button variant="outline" size="sm" className='cursor-pointer text-red-500 hover:text-red-700' onClick={() => handleDelete(spec.id)}>
+                                    <X className="h-4 w-4" />
                                 </Button>
                             </TableCell>
                         </TableRow>
@@ -173,4 +481,4 @@ const SpeciesManagement = () => {
     );
 };
 
-export default SpeciesManagement;
+export default Species;
