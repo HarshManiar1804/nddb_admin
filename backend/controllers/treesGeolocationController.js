@@ -12,12 +12,21 @@ const db = require("../models/db");
  */
 exports.getAllGeolocations = async (req, res, next) => {
   try {
-    let query = "SELECT * FROM Trees_Geolocation";
+    let query = `
+      SELECT 
+        tg.ID, 
+        tg.SpeciesID, 
+        tg.Longitude, 
+        tg.Latitude, 
+        s.TreeName AS treeName, 
+        s.ScientificName AS scientificName
+      FROM Trees_Geolocation tg
+      JOIN Species s ON tg.SpeciesID = s.ID
+    `;
     const values = [];
 
-    // Filter by species if provided
     if (req.query.speciesId) {
-      query = "SELECT * FROM Trees_Geolocation WHERE SpeciesID = $1";
+      query += ` WHERE tg.SpeciesID = $1`;
       values.push(req.query.speciesId);
     }
 
@@ -29,6 +38,7 @@ exports.getAllGeolocations = async (req, res, next) => {
       data: result.rows,
     });
   } catch (error) {
+    console.error("Error in getAllGeolocations:", error);
     next(error);
   }
 };

@@ -10,6 +10,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { X, Pencil, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,6 +25,14 @@ interface TreeGeolocation {
     speciesid: string;
     longitude: string;
     latitude: string;
+    Scientificname: string;
+    treename: string;
+}
+
+interface Species {
+    id: number;
+    treename: string;
+    scientificname?: string;
 }
 
 interface TreeGeolocationFormData {
@@ -30,16 +45,19 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const TreeLocation = () => {
     const [geolocations, setGeolocations] = useState<TreeGeolocation[]>([]);
+    const [species, setSpecies] = useState<Species[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
     const [editGeolocation, setEditGeolocation] = useState<TreeGeolocation | null>(null);
     const [viewGeolocation, setViewGeolocation] = useState<TreeGeolocation | null>(null);
+    const [selectedSpeciesId, setSelectedSpeciesId] = useState<string>('');
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<TreeGeolocationFormData>();
 
     useEffect(() => {
         fetchGeolocations();
+        fetchSpecies();
     }, []);
 
     const fetchGeolocations = useCallback(async () => {
@@ -54,7 +72,27 @@ const TreeLocation = () => {
         }
     }, []);
 
-    const handleSave = useCallback(async (data: TreeGeolocationFormData) => {
+    const fetchSpecies = useCallback(async () => {
+        try {
+            const { data } = await axios.get(`${API_URL}/species/details`);
+            setSpecies(data.data);
+        } catch (error) {
+            console.error('Error fetching species:', error);
+            toast.error('Failed to load species list');
+        }
+    }, []);
+
+    const handleSpeciesChange = (value: string) => {
+        setSelectedSpeciesId(value);
+    };
+
+    const handleSave = useCallback(async (formData: TreeGeolocationFormData) => {
+        // Override speciesid with selectedSpeciesId from dropdown
+        const data = {
+            ...formData,
+            speciesid: selectedSpeciesId
+        };
+
         try {
             if (editGeolocation) {
                 const confirmUpdate = window.confirm('Are you sure you want to update this Tree location?');
@@ -67,11 +105,12 @@ const TreeLocation = () => {
             }
             setIsDrawerOpen(false);
             reset();
+            setSelectedSpeciesId('');
             fetchGeolocations();
         } catch (error) {
             toast.error('Failed to save geolocation');
         }
-    }, [editGeolocation, fetchGeolocations, reset]);
+    }, [editGeolocation, fetchGeolocations, reset, selectedSpeciesId]);
 
     const handleDelete = useCallback(async (id: string) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this Tree location?');
@@ -85,6 +124,16 @@ const TreeLocation = () => {
         }
     }, [fetchGeolocations]);
 
+    // Initialize form when editing
+    const prepareForm = useCallback((geolocation: TreeGeolocation | null) => {
+        if (geolocation) {
+            setSelectedSpeciesId(geolocation.speciesid);
+        } else {
+            reset();
+            setSelectedSpeciesId('');
+        }
+    }, [reset]);
+
     if (loading) {
         return <div>Loading geolocations...</div>;
     }
@@ -95,7 +144,10 @@ const TreeLocation = () => {
                 <h2 className="text-2xl font-bold">Tree Geolocation Management</h2>
                 <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                     <DrawerTrigger asChild>
-                        <Button onClick={() => setEditGeolocation(null)}>Add New Geolocation</Button>
+                        <Button onClick={() => {
+                            setEditGeolocation(null);
+                            prepareForm(null);
+                        }}>Add New Geolocation</Button>
                     </DrawerTrigger>
                     <DrawerContent>
                         <form onSubmit={handleSubmit(handleSave)}>
@@ -105,9 +157,20 @@ const TreeLocation = () => {
                             </DrawerHeader>
                             <div className="p-4 space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="speciesId">Species ID</Label>
-                                    <Input id="speciesId" {...register("speciesid", { required: "Species ID is required" })} defaultValue={editGeolocation?.speciesid} placeholder="Enter species ID" />
-                                    {errors.speciesid && <p className="text-sm text-red-500">{errors.speciesid.message}</p>}
+                                    <Label htmlFor="speciesId">Species</Label>
+                                    <Select value={selectedSpeciesId} onValueChange={handleSpeciesChange}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select a species" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {species.map((s) => (
+                                                <SelectItem key={s.id} value={s.id.toString()}>
+                                                    {`${s.id} : ${s.treename}`}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="longitude">Longitude</Label>
@@ -121,7 +184,7 @@ const TreeLocation = () => {
                                 </div>
                             </div>
                             <DrawerFooter>
-                                <Button type="submit">{editGeolocation ? 'Update Geolocation' : 'Add Geolocation'}</Button>
+                                <Button type="submit" disabled={!selectedSpeciesId}>{editGeolocation ? 'Update Geolocation' : 'Add Geolocation'}</Button>
                                 <DrawerClose asChild>
                                     <Button variant="outline" type="button">Cancel</Button>
                                 </DrawerClose>
@@ -140,8 +203,12 @@ const TreeLocation = () => {
                     </DrawerHeader>
                     <div className="p-4 space-y-4">
                         <div>
-                            <Label>Species ID</Label>
-                            <p className="text-lg">{viewGeolocation?.speciesid}</p>
+                            <Label>Species</Label>
+                            <p className="text-lg">[ID: {viewGeolocation?.speciesid}] {viewGeolocation?.treename}</p>
+                        </div>
+                        <div>
+                            <Label>Scientific Name</Label>
+                            <p className="text-lg">{viewGeolocation?.Scientificname || 'N/A'}</p>
                         </div>
                         <div>
                             <Label>Longitude</Label>
@@ -165,7 +232,7 @@ const TreeLocation = () => {
                 <TableHeader>
                     <TableRow>
                         <TableHead>#</TableHead>
-                        <TableHead>Species ID</TableHead>
+                        <TableHead>Species Name</TableHead>
                         <TableHead>Longitude</TableHead>
                         <TableHead>Latitude</TableHead>
                         <TableHead>View</TableHead>
@@ -177,7 +244,7 @@ const TreeLocation = () => {
                     {geolocations.map((item, index) => (
                         <TableRow key={item.id}>
                             <TableCell>{index + 1}</TableCell>
-                            <TableCell>{item.speciesid}</TableCell>
+                            <TableCell>{item.treename}</TableCell>
                             <TableCell>{item.longitude}</TableCell>
                             <TableCell>{item.latitude}</TableCell>
                             <TableCell>
@@ -198,6 +265,7 @@ const TreeLocation = () => {
                                     size="sm"
                                     onClick={() => {
                                         setEditGeolocation(item);
+                                        prepareForm(item);
                                         setIsDrawerOpen(true);
                                     }}
                                 >

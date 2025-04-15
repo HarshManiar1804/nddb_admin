@@ -8,6 +8,7 @@ const router = express.Router();
 
 // GET all species
 router.get("/", speciesController.getAllSpecies);
+router.get("/details", speciesController.getSpeciesIDandName);
 
 // GET single species by ID
 router.get("/:id", speciesController.getSpeciesById);

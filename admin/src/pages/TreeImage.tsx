@@ -10,6 +10,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { X, Pencil, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,22 +25,33 @@ interface TreeImage {
     speciesid: number;
     imagetype?: string;
     imageurl: string;
+    treename: string;
 }
 
-interface TreeImageFormData extends Omit<TreeImage, 'id'> { }
+// Updated interface to match what comes from the API endpoint
+interface Species {
+    id: number;           // Using id instead of speciesId to match API response
+    treename: string;
+    scientificname?: string;
+}
+
+interface TreeImageFormData extends Omit<TreeImage, 'speciesId' | 'treename'> { }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 const TreeImage = () => {
     const [treeImages, setTreeImages] = useState<TreeImage[]>([]);
+    const [species, setSpecies] = useState<Species[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [editingImage, setEditingImage] = useState<TreeImage | null>(null);
+    const [selectedSpeciesId, setSelectedSpeciesId] = useState<number | ''>('');
 
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<TreeImageFormData>();
 
     useEffect(() => {
         fetchTreeImages();
+        fetchSpecies();
     }, []);
 
     const fetchTreeImages = useCallback(async () => {
@@ -48,30 +66,47 @@ const TreeImage = () => {
         }
     }, []);
 
+    const fetchSpecies = useCallback(async () => {
+        try {
+            const { data } = await axios.get(`${API_URL}/species/details`);
+            setSpecies(data.data);
+        } catch (error) {
+            console.error('Error fetching species:', error);
+            toast.error('Failed to load species list');
+        }
+    }, []);
+
     const createOrUpdateTreeImage = useCallback(async (imageData: TreeImageFormData) => {
+        // Ensure the speciesid is set from the dropdown selection
+        const finalData = {
+            ...imageData,
+            speciesid: selectedSpeciesId
+        };
+
         try {
             if (editingImage) {
                 const confirmUpdate = window.confirm('Are you sure you want to update this Tree image?');
                 if (!confirmUpdate) return;
-                await axios.put(`${API_URL}/trees-image/${editingImage.id}`, imageData);
+                await axios.put(`${API_URL}/trees-image/${editingImage.id}`, finalData);
                 toast.success('Tree image updated successfully');
             } else {
-                await axios.post(`${API_URL}/trees-image`, imageData);
+                await axios.post(`${API_URL}/trees-image`, finalData);
                 toast.success('Tree image added successfully');
             }
             setIsDrawerOpen(false);
             reset();
             fetchTreeImages();
             setEditingImage(null);
+            setSelectedSpeciesId('');
         } catch (error) {
             console.error('Error saving tree image:', error);
             toast.error('Failed to save tree image');
         }
-    }, [editingImage, fetchTreeImages, reset]);
+    }, [editingImage, fetchTreeImages, reset, selectedSpeciesId]);
 
     const handleEdit = (image: TreeImage) => {
         setEditingImage(image);
-        setValue('speciesid', image.speciesid);
+        setSelectedSpeciesId(image.speciesid);
         setValue('imagetype', image.imagetype || '');
         setValue('imageurl', image.imageurl);
         setIsDrawerOpen(true);
@@ -90,6 +125,10 @@ const TreeImage = () => {
         }
     }, [fetchTreeImages]);
 
+    const handleSpeciesChange = (value: string) => {
+        setSelectedSpeciesId(Number(value));
+    };
+
     if (loading) {
         return <div>Loading tree images...</div>;
     }
@@ -100,7 +139,11 @@ const TreeImage = () => {
                 <h2 className="text-2xl font-bold">Tree Images Management</h2>
                 <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                     <DrawerTrigger asChild>
-                        <Button onClick={() => setEditingImage(null)}>Add New Tree Image</Button>
+                        <Button onClick={() => {
+                            setEditingImage(null);
+                            setSelectedSpeciesId('');
+                            reset();
+                        }}>Add New Tree Image</Button>
                     </DrawerTrigger>
                     <DrawerContent className="overflow-y-auto">
                         <form onSubmit={handleSubmit(createOrUpdateTreeImage)}>
@@ -108,20 +151,39 @@ const TreeImage = () => {
                                 <DrawerTitle>{editingImage ? 'Edit Tree Image' : 'Add New Tree Image'}</DrawerTitle>
                                 <DrawerDescription>Enter tree image details.</DrawerDescription>
                             </DrawerHeader>
-                            <div className="p-4 space-y-2">
-                                <Label htmlFor="speciesid">Species ID</Label>
-                                <Input id="speciesid" type="number" {...register("speciesid", { required: true })} placeholder="Enter Species ID" />
-                                {errors.speciesid && <p className="text-sm text-red-500">Species ID is required</p>}
+                            <div className="p-4 space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="speciesid">Species</Label>
+                                    <Select value={selectedSpeciesId.toString()} onValueChange={handleSpeciesChange}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select a species" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {species.map((s) => (
+                                                <SelectItem key={s.id} value={s.id.toString()}>
+                                                    {` ${s.id} : ${s.treename}`}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
+                                </div>
 
-                                <Label htmlFor="imagetype">Image Type</Label>
-                                <Input id="imagetype" {...register("imagetype")} placeholder="Enter Image Type" />
+                                <div className="space-y-2">
+                                    <Label htmlFor="imagetype">Image Type</Label>
+                                    <Input id="imagetype" {...register("imagetype")} placeholder="Enter Image Type" />
+                                </div>
 
-                                <Label htmlFor="imageurl">Image URL</Label>
-                                <Input id="imageurl" {...register("imageurl", { required: true })} placeholder="Enter Image URL" />
-                                {errors.imageurl && <p className="text-sm text-red-500">Image URL is required</p>}
+                                <div className="space-y-2">
+                                    <Label htmlFor="imageurl">Image URL</Label>
+                                    <Input id="imageurl" {...register("imageurl", { required: true })} placeholder="Enter Image URL" />
+                                    {errors.imageurl && <p className="text-sm text-red-500">Image URL is required</p>}
+                                </div>
                             </div>
                             <DrawerFooter>
-                                <Button type="submit">{editingImage ? 'Update Image' : 'Add Image'}</Button>
+                                <Button type="submit" disabled={!selectedSpeciesId}>
+                                    {editingImage ? 'Update Image' : 'Add Image'}
+                                </Button>
                                 <DrawerClose asChild>
                                     <Button variant="outline" type="button">Cancel</Button>
                                 </DrawerClose>
@@ -135,7 +197,7 @@ const TreeImage = () => {
                 <TableHeader>
                     <TableRow>
                         <TableHead>#</TableHead>
-                        <TableHead>Species ID</TableHead>
+                        <TableHead>Species</TableHead>
                         <TableHead>Image Type</TableHead>
                         <TableHead>Image</TableHead>
                         <TableHead>View</TableHead>
@@ -147,7 +209,7 @@ const TreeImage = () => {
                     {treeImages.map((img, index) => (
                         <TableRow key={img.id}>
                             <TableCell>{index + 1}</TableCell>
-                            <TableCell>{img.speciesid}</TableCell>
+                            <TableCell>{img.treename}</TableCell>
                             <TableCell>{img.imagetype || 'N/A'}</TableCell>
                             <TableCell>
                                 <img src={img.imageurl} alt="Tree" className="w-20 h-20 object-cover" />
@@ -168,7 +230,7 @@ const TreeImage = () => {
                             </TableCell>
                             <TableCell>
                                 <Button
-                                    variant="outline" size="sm" className='cursor-pointer text-red-500 hover:text-red-700'
+                                    variant="outline" size="sm" className="cursor-pointer text-red-500 hover:text-red-700"
                                     onClick={() => handleDelete(img.id)}>
                                     <X size={16} />
                                 </Button>

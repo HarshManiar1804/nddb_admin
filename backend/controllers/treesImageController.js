@@ -12,24 +12,33 @@ const db = require("../models/db");
  */
 exports.getAllImages = async (req, res, next) => {
   try {
-    let query = "SELECT * FROM Trees_Image";
+    let query = `
+      SELECT 
+        ti.ID, 
+        ti.SpeciesID, 
+        ti.ImageType, 
+        ti.ImageURL, 
+        s.TreeName AS treeName,
+        s.ScientificName AS scientificName  
+      FROM Trees_Image ti
+      JOIN Species s ON ti.SpeciesID = s.ID
+    `;
+
+    const conditions = [];
     const values = [];
 
-    // Filter by species if provided
     if (req.query.speciesid) {
-      query = "SELECT * FROM Trees_Image WHERE speciesid = $1";
+      conditions.push(`ti.SpeciesID = $${values.length + 1}`);
       values.push(req.query.speciesid);
     }
 
-    // Filter by image type if provided
     if (req.query.imageType) {
-      if (values.length > 0) {
-        query += " AND ImageType = $2";
-        values.push(req.query.imageType);
-      } else {
-        query += " WHERE ImageType = $1";
-        values.push(req.query.imageType);
-      }
+      conditions.push(`ti.ImageType = $${values.length + 1}`);
+      values.push(req.query.imageType);
+    }
+
+    if (conditions.length > 0) {
+      query += " WHERE " + conditions.join(" AND ");
     }
 
     const result = await db.query(query, values);
@@ -40,6 +49,7 @@ exports.getAllImages = async (req, res, next) => {
       data: result.rows,
     });
   } catch (error) {
+    console.error("Error in getAllImages:", error);
     next(error);
   }
 };

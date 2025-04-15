@@ -27,6 +27,7 @@ interface SpeciesUsage {
     species?: Species;
 }
 
+
 interface SpeciesUsageFormData {
     speciesId: string;
     UsageTitle: string;
@@ -36,6 +37,8 @@ interface SpeciesUsageFormData {
 const API_URL = import.meta.env.VITE_API_URL;
 
 const SpeciesUsage = () => {
+    const [species, setSpecies] = useState<Species[]>([]);
+
     const [speciesUsages, setSpeciesUsages] = useState<SpeciesUsage[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);

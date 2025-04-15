@@ -335,3 +335,18 @@ exports.deleteSpecies = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getSpeciesIDandName = async (req, res, next) => {
+  try {
+    const result = await db.query(`
+      SELECT id,treename from species;
+    `);
+    res.status(200).json({
+      success: true,
+      count: result.rows.length,
+      data: result.rows,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

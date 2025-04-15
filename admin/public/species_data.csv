@@ -1,0 +1,216 @@
+id,treename,scientificname,hindiname,centeroforigin,geographicaldistribution,icunstatus,totalInnddbcampus,qrcode,link,isactive,botonyid,campusid
+1,Neem,Azadirachta indica A.Juss.,नीम,"Indian subcontinent, particularly from regions in India, Myanmar, and Bangladesh","Neem is widely distributed in Asia, Australia, Africa, and America.",Least Concern,269,,https://www.nddb.coop/campus/Trees/1_Neem.html,TRUE,24,1
+2,Sausage Tree,Kigelia pinnata (Lam.) Benth.,बालम खीरा,tropical and southern Africa,Saharan tropical Africa and as far south as South Africa.,Least Concern (LC),8,,https://www.nddb.coop/campus/Trees/2_Saus.html,TRUE,6,1
+3,Copperpod,Peltophorum pterocarpum (DC.) K.Heyne,पीला गुलमोहर,"Tropical Southeast Asia and northern Australasia. Specifically, from Indo-China to northern Australia.","Southeast Asia, Australia, Sri Lanka.",Red list,175,,https://www.nddb.coop/campus/Trees/3_Copper.html,TRUE,10,1
+4,Kaim,Mitragyna parvifolia (Roxb.) Korth.,कलम,Indian Subcontinent and Indo-China.,"India, Sri Lanka,Banglades, Myanmar (Burma), Pakistan.",Endangered,2,,https://www.nddb.coop/campus/Trees/4_Kain.html,TRUE,37,1
+5,Flame of the Forest,Butea monosperma (Lam.) Taub.,पलाश,Indian Subcontinent and Southeast Asia.,"India, Bangladesh, Nepal, Sri Lanka, Myanmar, Thailand, Pakistan",Least Concern (LC),11,,https://www.nddb.coop/campus/Trees/5_Flame.html,TRUE,2,1
+6,Sandalwood,Santalum album L.,चंदन,"Native to India, particularly the southern regions, and the Indonesian archipelago.","India (especially Karnataka, Tamil Nadu, and Andhra Pradesh), Indonesia,Australia (introduced)",Vulnerable,59,,https://www.nddb.coop/campus/Trees/6_Sandal.html,TRUE,39,1
+7,Kadam,Neolamarckia cadamba (Roxb.) Bosser,कदंब,Native to the Indian Subcontinent and Southeast Asia.,"India, Bangladesh, Nepal, Sri Lanka, Southeast Asia (including Malaysia, Indonesia), Northern Australia",No specific conservation status,17,,https://www.nddb.coop/campus/Trees/7_Kadam.html,TRUE,37,1
+8,Spanish Cherry,Mimusops elengii L.,मौलसरी,"Native to India, Sri Lanka, and the Andaman Islands.","India, Sri Lanka, Southeast Asia (including Malaysia, Indonesia), Australia (introduced), Some tropical regions of other continents",Least Concern (LC),19,,https://www.nddb.coop/campus/Trees/8_Spanish.html,TRUE,41,1
+9,Roxburgh's Cassia,Cassia roxburghii DC.,गुलाबी अमलतास (Gulabi Amaltas),"Native to the Indian Subcontinent, particularly India and Sri Lanka.","India (especially in the southern regions), Sri Lanka, Myanmar, Malaysia",Not Evaluated (NE),3,,https://www.nddb.coop/campus/Trees/9_Rox.html,TRUE,10,1
+10,Cannonball,Couroupita guianensis Aubl.,शिवलिङ्गी (Shivalingi),"Tropical rainforests of South and Central America, particularly the Amazon Basin.","Tropical South America (Brazil, Guyana, etc.), Central America Widely cultivated in tropical regions worldwide, including India, Southeast Asia, and parts of Africa.",	Endangered,4,,https://www.nddb.coop/campus/Trees/10_Canno.html,TRUE,18,1
+11,Golden Shower,Cassia fistula,अमलतास,Native to the Indian Subcontinent and Southeast Asia.,India Sri Lanka Bangladesh Myanmar Thailand Pakistan & also widely cultivated in tropical and subtropical regions worldwide.,	Least Concern (LC),32,,https://www.nddb.coop/campus/Trees/11_GoldShow.html,TRUE,10,1
+12,Putranjiva,Putranjiva roxburgii Wall,पुत्रजीव,Tropical Asia,"Native to tropical Asia and is found in regions like India, Nepal, Sri Lanka, Bangladesh, Myanmar, Thailand, and Vietnam.",	Least Concern,34,,https://www.nddb.coop/campus/Trees/12_Luck.html,TRUE,35,1
+13,Bael,Eagle marmelos (L.) Correa,बेल (Bel),"Native to the Indian Subcontinent, specifically India and surrounding regions.",India Sri Lanka Bangladesh Nepal Myanmar Thailand Pakistan Also cultivated in other tropical and subtropical regions.,	Least Concern (LC),18,,https://www.nddb.coop/campus/Trees/13_Bael.html,TRUE,38,1
+14,Geiger Tree,Cordia sebestena L.,लाल लसोरा (Lal Lasora),Native to the tropical Americas,Caribbean Islands Southern Florida (USA) Central America Widely cultivated in tropical and subtropical regions worldwide as an ornamental plant.,Least Concern,33,,https://www.nddb.coop/campus/Trees/14_Geiger.html,TRUE,7,1
+15,Silver Oak,Grevillea robusta A.Cunn. ex R.Br.,सिल्वर ओक (Silver Oak),"Eastern coastal Australia, specifically New South Wales and Queensland.","Widely cultivated in many tropical and subtropical regions worldwide, including: India Sri Lanka Africa (especially East Africa) South America Hawaii",Least Concern (LC),23,,https://www.nddb.coop/campus/Trees/15_Silver.html,TRUE,34,1
+16,Cuban Royal Palm,Roystonea regia (Kunth) O.F.Cook,रोयस्टोनिया रेजिया (Roystonea Regia),Native to Cuba.,Cuba (native range) Florida (USA) Mexico Central America The Caribbean Widely cultivated in tropical and subtropical regions worldwide.,Least Concern (LC),206,,https://www.nddb.coop/campus/Trees/16_Cuban.html,TRUE,4,1
+17,Saptaparni,Alstonia scholaris (L.) R.Br.,सप्तपर्ण (Saptaparna),"Native to the Indian Subcontinent, Southeast Asia, and Australasia.","India, Sri Lanka, Southeast Asia (Malaysia, Indonesia, Philippines, etc.), Australia, China, Parts of America It thrives in tropical and subtropical regions.",Least Concern (LC),27,,https://www.nddb.coop/campus/Trees/18_Saptaparni.html ,TRUE,3,1
+18,Portia,Thespesia populnea (L.) Sol. ex Correa,पारस पीपल (Paras Pipal),Native to the tropical coastal regions of the Old World.,"Tropical coastal regions worldwide India, Southeast Asia, Pacific Islands, Africa, Australia, The Americas It is a pantropical species, meaning it is found in most tropical regions.",Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/19_Portia.html,TRUE,3,1
+19,Sacred Fig,Ficus religeosa L.,पीपल (Pipal),"Native to the Indian Subcontinent (India, Nepal, Sri Lanka, Pakistan, Bangladesh, and southwest China).","Tropical coastal regions worldwide, India, Southeast Asia, China, Widely cultivated in tropical and subtropical regions worldwide.",Least Concern (LC),11,,https://www.nddb.coop/campus/Trees/20_SacredFig.html,TRUE,25,1
+20,Common Bamboo,Bambusa vulgaris Schrad. ex J.C.Wendl,बांस (Baans),Native to Southeast Asia or southern China.,"Asia (India, China, Southeast Asia), Africa, South America ,The Caribbean Australia It is one of the most widely cultivated bamboo species.",Least Concern (LC),9,,https://www.nddb.coop/campus/Trees/21_CommonBamboo.html,TRUE,33,1
+21,Tropical Almond,Terminalia catappa L.,बादामी (Badami),"Native to Southeast Asia, possibly Malaysia.","Southeast Asia, India, Africa, Australia, The Pacific Islands, The Americas, It is a pantropical species, meaning it is found in most tropical coastal regions.",Least Concern (LC),4,,https://www.nddb.coop/campus/Trees/22_TropicalAlmond.html,TRUE,12,1
+22,Java Plum,Syzygium cumini (L.) Skeels.,जामुन (Jamun),"Native to Southeast Asia, possibly Malaysia.","India, Sri Lanka, Southeast Asia, Australia, Parts of Africa, The Americas, It thrives in tropical and subtropical climates.",Least Concern (LC),67,,https://www.nddb.coop/campus/Trees/23_JavaPlum.html,TRUE,28,1
+23,Coconut Palm,Cocos nucifera L.,नारियल (Nariyal),Indo-Pacific region,"Asia (India, Southeast Asia, etc.), Pacific Islands, Africa, The Americas, It thrives in sandy soils and tropical climates.",	Least Concern (LC),20,,https://www.nddb.coop/campus/Trees/24_CoconutPalm.html,TRUE,4,1
+24,Cook Pine,Araucaria columnaris J.R.Forst. Hook.,अरौकेरिया (Araucaria),"Native to New Caledonia, a group of islands in the southwest Pacific Ocean.","New Caledonia (native range),Widely cultivated in tropical and subtropical regions worldwide, including(Australia,Hawaii,Coastal areas of many countries),It is a very popular ornamental tree.",Least Concern (LC),10,,https://www.nddb.coop/campus/Trees/25_CookPine.html,TRUE,5,1
+25,Coral,Erythrina variegata L.,पांगरा (Pangara),Native to tropical and subtropical regions of Asia.,"India,Southeast Asia,Australia,Pacific Islands,Madagascar,Parts of Africa,It is a coastal species, often found near shorelines.",Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/26_Coral.html,TRUE,16,1
+26,	Banana,Musa paradisiaca L.,केला (Kela),"Southeast Asia, specifically the region encompassing Malaysia, Indonesia, and the Philippines.","Southeast Asia,India,Africa,Central and South America,The Caribbean,It is widely cultivated in these regions.",-,18,,https://www.nddb.coop/campus/Trees/27_Banana.html,TRUE,27,1
+27,Rain,Albizia saman (Jacq.) Merr.,विलायती शिरीष (Vilayati Shirish),Native to tropical Central and South America.,"Southeast Asia,India,Africa,The Pacific Islands,The Caribbean",Least Concern (LC),15,,https://www.nddb.coop/campus/Trees/28_Rain.html,TRUE,16,1
+28,Indian Gooseberry,Phyllanthus emblica L.,आंवला (Amla),"Native to India, Southeast Asia, and parts of the Middle East.","India
+Southeast Asia
+China
+Sri Lanka
+Parts of the Middle East
+It thrives in tropical and subtropical regions.",Least Concern (LC),13,,https://www.nddb.coop/campus/Trees/29_IndianGooseberry.html,TRUE,32,1
+29,Guava,Psidium guajava L.,अमरूद (Amrood),"Native to tropical America, possibly from an area extending from Mexico or Central America south to northern South America.","Central and South America
+The Caribbean
+India
+Southeast Asia
+Africa
+Australia
+It is widely cultivated in these regions.",Least Concern (LC),34,,https://www.nddb.coop/campus/Trees/30_Guava.html,TRUE,28,1
+30,Kassod,Senna siamea (Lam.) Irwin et Barneby,कैसोड (Kassod),"Native to Southeast Asia, particularly Thailand.","India
+Africa
+Australia
+The Pacific Islands
+The Americas",Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/31_Kassod.html,TRUE,16,1
+31,Indian Cherry,Cordia myxa L.,लसोड़ा (Lasoda),"Native to the Middle East, South Asia, and Southeast Asia.","India
+Pakistan
+Iran
+Middle East
+North Africa
+It is also found in other tropical and subtropical regions.",Least Concern (LC),3,,https://www.nddb.coop/campus/Trees/32_IndianCherry.html,TRUE,7,1
+32,,Polyalthia longifolia (Sonn.) Thwaites,देवदार (Devdar),Native to India and Sri Lanka.,"India
+Sri Lanka
+Widely cultivated in tropical and subtropical regions worldwide.",Least Concern (LC),302,,https://www.nddb.coop/campus/Trees/33_Ashoka.html,TRUE,2,1
+33,Teak,Tectona grandis L.f.,सागौन (Sagwan),"Native to South and Southeast Asia, including India, Myanmar, Thailand, and Indonesia.","India
+Myanmar
+Thailand
+Indonesia
+Also widely cultivated in tropical regions of Africa and Latin America.",Endangered,20,,https://www.nddb.coop/campus/Trees/34_Teak.html,TRUE,19,1
+34,Lemon Scented Gum,Eucalyptus citriodora Hook.,	नींबू खुशबू वाला यूकेलिप्टस (Nimbu khushboo wala Yukealipatas),"Native to eastern Australia, specifically Queensland.","India
+Africa
+South America
+Parts of the United States",Least Concern (LC),7,,https://www.nddb.coop/campus/Trees/35_LemonScentedGum.html,TRUE,28,1
+35,Sugar Apple,Annona squamosa L.,	सीताफल (Sitafal),"Native to the tropical Americas, possibly the Caribbean.","India
+Southeast Asia
+Africa
+Australia
+The Pacific Islands",Least Concern (LC),23,,https://www.nddb.coop/campus/Trees/36_SugarApple.html,TRUE,2,1
+36,African Tulip,Spathodea campanulata P.Beauv.,स्पैथोडिया कैम्पानुलाटा (Spathodea Campanulata),"Native to tropical Africa, specifically regions in West and East Africa.","India
+Southeast Asia
+The Pacific Islands
+The Caribbean
+Parts of Central and South America",Least Concern (LC),16,,https://www.nddb.coop/campus/Trees/37_AfricanTulip.html,TRUE,6,1
+37,Australian Pine,Casuarina equisetifolia L.,कैसुरीना (Casuarina),"Native to:Australia, Southeast Asia, Parts of the Pacific Islands","Australia Southeast Asia India Africa The Pacific Islands The Americas (where it has become invasive in some areas, notably Florida)",Least Concern (LC),24,,https://www.nddb.coop/campus/Trees/38_AustralianPine.html,TRUE,11,1
+38,Rayan,Manilkara hexandra (Roxb.) Dubard,रायण (Rayan),"	India, Sri Lanka",India Sri Lanka Pakistan Parts of Southeast Asia,Least Concern (LC),8,,https://www.nddb.coop/campus/Trees/39_Rayan.html,TRUE,41,1
+39,Mango,Mangifera indica L.,आम (Aam),"Northwestern Myanmar, Bangladesh, and eastern and northeastern India.",	Tropical and subtropical regions worldwide South Asia Southeast Asia Africa The Americas,Data Deficient,19,,https://www.nddb.coop/campus/Trees/40_Mango.html,TRUE,1,1
+40,Madre de Cacao,Gliricidia sepium (Jacq.) Steud.,ग्लिरिसिडिया सेपियम (Gliricidia Sepium),Mexico Central America Northern South America,Southeast Asia Africa The Pacific Islands The Caribbean,Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/41_MadredeCacao.html,TRUE,16,1
+41,Ashoka Tree,Saraca asoca (Roxb.) Willd.,अशोक (Ashok),"India, Sri Lanka, Myanmar, Parts of Southeast Asia",India Sri Lanka Myanmar Thailand Malaysia Parts of Indonesia,Vulnerable (VU),5,,https://www.nddb.coop/campus/Trees/42_Ashoka.html,TRUE,16,1
+42,Star gooseberry,Phyllanthus acidus (L.) Skeels,हरफरोरी (Harpharori),Madagascar or Southeast Asia.,Southeast Asia India Caribbean Parts of South America Tropical Africa,Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/43_Stargooseberry.html,TRUE,32,1
+43,Manila Tamarind,Pithecellobium dulce (Roxb.) Benth.,जंगल जलेबी (Jangal Jalebi),Mexico and Central America.,Mexico Central America India Southeast Asia Parts of Africa,Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/44_ManilaTamarind.html,TRUE,16,1
+44,Cluster fig,Ficus racemosa L.,गूलर (Goolar),"South Asia, Southeast Asia, Australia",India Sri Lanka Myanmar Thailand Malaysia Indonesia Australia and other tropical regions.,Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/45_ClusterFig.html,TRUE,25,1
+45,Arjuna,Terminalia arjuna (Roxb. ex DC.) Wight & Arn.,अर्जुन (Arjun),"India, Sri Lanka, Myanmar",India Sri Lanka Nepal Pakistan Bangladesh Myanmar,-,3,,https://www.nddb.coop/campus/Trees/46_Arjuna.html,TRUE,12,1
+46,Bidi Leaf Tree,Bauhinia racemosa Lam.,कटमौली (Katmauli),"India, Sri Lanka",India Sri Lanka Pakistan Nepal And some parts of Southeast Asia.,Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/47_BidiLeaf.html,TRUE,15,1
+47,Pink trumpet Tree,Tabebuia rosea (Bertol.) DC.,गुलाबी टेबेबुइया (Gulabi Tabebuia),"Mexico, Central America,Northern South America","Central and South America (native range) Widely cultivated in tropical and subtropical regions worldwide, including: India Southeast Asia The Caribbean",Least Concern (LC),4,,https://www.nddb.coop/campus/Trees/48_Pinktrumpet.html,TRUE,6,1
+48,Rubber Tree,Ficus elastica Roxb. ex Hornem.,रबर का पेड़ (Rubber Ka Ped),"Northeast India, Southeast Asia (Malaysia, Indonesia)",Widely cultivated in tropical and subtropical regions worldwide as an ornamental.,Least Concern (LC),3,,https://www.nddb.coop/campus/Trees/49_Rubber.html,TRUE,25,1
+49,"Alexandrian laurel, Beach calophyllum.",Calophyllum inophyllum L.,सुल्ताना चम्पा (Sultana Champa),Coastal regions of East Africa South and Southeast Asia Australia Pacific Islands,Widely distributed in tropical coastal areas worldwide.,Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/50_SultanaChampa.html,TRUE,9,1
+50,"Banyan tree, Indian banyan.",Ficus benghalensis L.,बरगद (Bargad),Indian subcontinent,India Sri Lanka Pakistan Bangladesh And naturalized in various tropical and subtropical regions,Not yet evaluated,4,,https://www.nddb.coop/campus/Trees/51_Banyan.html,TRUE,25,1
+51,"Idigbo, Framire, Black afara.",Terminalia ivorensis A.Chev.,टर्मिनलिया इवोरेन्सिस (Terminalia Ivorensis),"Tropical West Africa (specifically, regions like Ivory Coast, Ghana, Nigeria).",West Africa. Cultivated in some other tropical regions for timber production.,Vulnerable (VU),6,,https://www.nddb.coop/campus/Trees/52_Terminalia.html,TRUE,12,1
+52,"Screw pine, Fragrant screw pine",Pandanus odorifer (Forssk.) Kunzte,केवड़ा (Kevda),"South Asia, Southeast Asia, Tropical and Subtropical Asia",Coastal regions of the The Pacific Islands Tropical and subtropical coastlines,Least Concern (LC),4,,https://www.nddb.coop/campus/Trees/53_Screwpine.html,TRUE,30,1
+53,"Sago Palm, King sago",Cycas revoluta Thunb.,साइकस रिवोल्युटा (Cycas Revoluta),Southern Japan (including the Ryukyu Islands) Possibly parts of southern China.,Native regions of Japan and potentially China. Widely cultivated globally in tropical and subtropical regions as an ornamental plant.,Least Concern (LC),5,,https://www.nddb.coop/campus/Trees/54_SagoPalm.html,TRUE,13,1
+54,"Queen's crape-myrtle, Pride of India, Giant crape-myrtle.",Lagerstroemia speciosa(L.) Pers.,जारुल (Jarul),Tropical South Asia Southeast Asia,India Sri Lanka Bangladesh Myanmar Thailand Malaysia Philippines,Least Concern (LC),5,,https://www.nddb.coop/campus/Trees/55_Jarul.html,TRUE,21,1
+55,Rudraksha Tree,Elaeocarpus angustifolius Blume,रुद्राक्ष (Rudraksh),"Himalayas, through Southeast Asia, and to parts of the Pacific",India Nepal Southeast Asia Parts of Australia And pacific islands.,Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/56_Rudraksha.html,TRUE,14,1
+56,"Kapok Tree, White Silk Cotton Tree, Safed Shimdo",Ceiba pentandra (L.) Gaertn.,सफेद शिमलो (Safed Shimlo),Tropical Americas West Africa,Tropical Americas West Africa India Southeast Asia Parts of Australia,Least Concern (LC),3,,https://www.nddb.coop/campus/Trees/57_SafedShimdo.html,TRUE,23,1
+57,"Crimson Bottlebrush, Lemon Bottlebrush",Melaleuca citrina (Curtis) Dum.Course,चील (Cheel),Eastern Australia,"Eastern Australia (native range).
+Widely cultivated in temperate and subtropical regions as an ornamental.",- ,6,,https://www.nddb.coop/campus/Trees/58_CrimsonBottlebrush.html,TRUE,28,1
+58,"Maple-leaved Bayur, Karnikar",Pterospermum acerifolium (L.) Willd.,कनक चम्पा (Kanak Champa),"Tropical Asia, including India, Nepal, and Southeast Asia.","India
+Nepal
+Bangladesh
+Myanmar
+Thailand and other parts of Southeast Asia.",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/59_MapleLeavedBayur.html,TRUE,23,1
+59,Silver Trumpet,Tabebuia aurea (Silva Manso) Benth. & Hook.f. ex S.Moore.,पीला टेबेबुइया (Peela Tabebuia),"South America, particularly in regions like Paraguay, Brazil, and Argentina.","South America (native range)
+Cultivated as an ornamental tree in various tropical and subtropical regions.",Least Concern (LC),3,,https://www.nddb.coop/campus/Trees/60_SilverTrumpet.html,TRUE,6,1
+60,African Locust Bean,Parkia biglobosa (Jacq.) R.Br. ex G.Don,पार्किआ बिगलोबोसा (Parkia Biglobosa),"Tropical Africa, particularly West Africa.","West Africa
+Central Africa
+Parts of East Africa",Least Concern (LC),5,,https://www.nddb.coop/campus/Trees/61_AfricanLocustBean.html,TRUE,16,1
+61,Indian Cork,Millingtonia hortensis L.f.,नीम चमेली (Neem Chameli),Southeast Asia,"Myanmar
+Thailand
+Malaysia
+Indonesia
+Widely cultivated in tropical and subtropical regions worldwide as an ornamental.",Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/62_IndianCork.html,TRUE,6,1
+62,Jamaican Cherry,Muntingia calabura L.,चिरैनी (Chiraini),"Tropical Americas, specifically from Mexico to South America.","Widely cultivated in tropical regions worldwide, including:
+Southeast Asia
+India
+The Caribbean
+Parts of Africa",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/63_JamaicanCherry.html,TRUE,26,1
+63,Devil Fig,Ficus hispida L.f.,"कठगूलर"" (Katguler)",Southeast Asia,"India
+Sri Lanka
+Southeast Asia
+Australia
+And other tropical regions.",Least Concern (LC),11,,https://www.nddb.coop/campus/Trees/64_DevilFig.html,TRUE,25,1
+64,"Carambola, Starfruit",Averrhoa carambola L.,कमरख (Kamrakh),"Southeast Asia, possibly Malaysia or Indonesia.",India Sri Lanka The Caribbean Parts of Africa Australia The Americas,Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/65_Carambola.html,TRUE,29,1
+65,"Sapodilla, Chiku",Manilkara zapota (L.) P.Royen,चीकू (Chiku),Southern Mexico Central America Parts of the Caribbean,"India Southeast Asia Parts of Africa and other tropical areas.
+",Least Concern (LC),6,,https://www.nddb.coop/campus/Trees/66_Sapodilla.html,TRUE,41,1
+66,Purple Orchid Tree,Bauhinia purpurea L.,रक्तकांचन (Raktakanchan),South China Southeast Asia,India Sri Lanka Nepal and various other tropical locations.,Least Concern (LC),6,,https://www.nddb.coop/campus/Trees/67_Purple_Orchid.html,TRUE,16,1
+67,Indian Elm,Holoptelea integrifolia (Roxb.) Planch.,चिलबिल (Chilbil),"Indian subcontinent, Indo-China",India Sri Lanka Myanmar Indo-China East Borneo,Least Concern (LC),7,,https://www.nddb.coop/campus/Trees/68_Indian_Elm.html,TRUE,43,1
+68,White bottlebrush,Melaleuca salicina (Curtis) Dum.Cours. Synonyms: Callistemon salignus (Sm.) Sweet,चील (Cheel),Endemic to eastern Australia.,"Eastern Australia (New South Wales, Queensland, Victoria). Cultivated in various other temperate and subtropical regions.",-,22,,https://www.nddb.coop/campus/Trees/69_Whitebottlebrush.html,TRUE,28,1
+69,South India soapnut,Sapindus trifoliatus L.,अरीठा (Aritha),Pakistan India Bangladesh The Andaman Islands Myanmar Sri Lanka,Eastern tropical Africa Rodrigues Trinidad and Tobago,Data Deficient,2,,https://www.nddb.coop/campus/Trees/70_South_India_soapnut.html,TRUE,40,1
+70,Tamarind,Tamarindus indica L.,Imli (इमली).,"tropical Africa, particularly East Africa and Madagascar",India Southeast Asia Africa The Caribbean Central and South America Australia.,Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/71_Tamarind_Tree.html,TRUE,16,1
+71,Five-leaved Chaste,Vitex negundo L.,निर्गुंडी (Nirgundi),Native to tropical and subtropical Asia.,"Afghanistan
+India
+China
+Southeast Asia
+And other tropical and subtropical regions.",Least Concern (LC),4,,https://www.nddb.coop/campus/Trees/72_FiveLeavedChaste.html,TRUE,19,1
+72,Black Myrobalan,Terminalia chebula Retz.,हरीतकी (Haritaki),"South Asia (India, Nepal, Sri Lanka)
+Southwest China","India
+Nepal
+Sri Lanka
+China
+Southeast Asia
+And parts of the Middle East.",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/73_BlackMyrobalan.html,TRUE,NA,1
+73,Buttonwood,Conocarpus erectus L.,कोनोकार्पस (Conocarpus),Tropical and subtropical coastlines of the Americas and West Africa.,"Florida (USA)
+The Caribbean
+Mexico
+Central and South America
+West Africa",Least Concern (LC),3,,https://www.nddb.coop/campus/Trees/74_Buttonwood.html,TRUE,12,1
+74,Paradise,Simarouba glauca DC.,लक्ष्मी तरु (Laxmi taru),"The Caribbean
+Central America
+South America","Native regions of the Americas.
+Cultivated in tropical regions of Asia and Africa.",Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/75_Paradise.html,TRUE,42,1
+75,Sami,Prosopis cineraria (L.) Druce,खेजड़ी (Khejri),Arid regions of Western Asia and the Indian subcontinent.,"India (Rajasthan, Haryana, Punjab, Gujarat)
+Pakistan
+Afghanistan
+Iran
+Arabian Peninsula
+And other arid regions",Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/76_Sami.html,TRUE,16,1
+76,Guggul,Commiphora wightii (Arn.) Bhandari,गुग्गुल (Guggul),"Arid regions of India, Pakistan, and parts of Central Asia","India (Rajasthan, Gujarat, Madhya Pradesh)
+Pakistan
+Parts of Central Asia",	Critically Endangered (CR),1,,https://www.nddb.coop/campus/Trees/77_Guggul.html,TRUE,8,1
+77,Jackfruit,Artocarpus heterophyllus Lam.,कटहल (Kathal),"The Western Ghats of India.
+Possibly also Bangladesh.","India
+Southeast Asia
+Bangladesh
+Sri Lanka
+Parts of Africa
+The Caribbean
+Brazil
+Australia",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/78_Jackfruit.html,TRUE,25,1
+78,Bibhitaki,Terminalia bellirica (Gaertn.) Roxb.,बहेड़ा (Baheda),South and Southeast Asia,"India
+Nepal
+Sri Lanka
+Southeast Asia
+China",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/79_Bibhitaki.html,TRUE,12,1
+79,Ber,Ziziphus mauritiana Lam.,बेर (Ber),South Asia (mainly India),"India
+Pakistan
+Bagladesh
+China
+Southeast Asia
+Africa
+Australia and many other tropical and subtropical areas.",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/80_Ber.html,TRUE,36,1
+80,Calabash Tree,Crescentia cujete L,,"Tropical Americas, ranging from Mexico to Venezuela and the Caribbean.","Africa, Asia, and other parts of the world.",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/81_Calabash.html,TRUE,6,1
+81,Sheesham,Dalbergia sissoo Roxb,Sheesham (शीशम),Indian subcontinent and southern Iran.,India Pakistan Nepal Bangladesh Iran Also widely cultivated and naturalized in other tropical and subtropical regions.,Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/82_Sheesham.html,TRUE,16,1
+82,Camphor tree,Camphora officinarum Nees,Kapoor (कपूर),Taiwan Southern Japan East China Vietnam,"Widely cultivated and naturalized in tropical and subtropical regions worldwide, including: India Southeast Asia Africa Australia The United States (particularly Florida and California).",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/83_Camphor.html,TRUE,17,1
+83,Indian bay leaf,Cinnamomum tamala (Buch.-Ham.) T.Nees & C.H.Eberm.,Tejpatta (तेजपत्ता).,"The Himalayas, including regions of India, Nepal, and Bhutan.","Himalayan regions of India, Nepal, and Bhutan. Cultivated in various parts of South and Southeast Asia.",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/84_Indian_bay_leaf.html,TRUE,17,1
+84,Black catechu,Senegalia catechu (L.f.) P.J.H.Hurter & Mabb.,Khair (खैर).,The Indian subcontinent and Southeast Asia,India Pakistan Nepal Bangladesh Myanmar Thailand and other parts of Southeast Asia.,Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/85_Black_catechu.html,TRUE,16,1
+85,Falsa,Grewia asiatica. ( Falsa ),Falsa (फालसा),"The Indian subcontinent, specifically India and Pakistan.",India Pakistan Bangladesh Nepal and other tropical and subtropical regions where it is cultivated.,Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/86_Falsa.html,TRUE,23,1
+86,Tree of Heaven,Ailanthus excels Roxb.,Maharukh (महारुख),The Indian subcontinent.,India Pakistan Nepal Sri Lanka And other parts of South and Southeast Asia.,Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/87_Tree_of_Heaven.html,TRUE,42,1
+87,Jacaranda,Jacaranda mimosifolia D.Don,Neeli Gulmohur (नीली गुलमोहर),"Southern and central South America (Argentina, Bolivia, Brazil, Paraguay)","South America North America (particularly California, Florida) Australia Africa India And other warm climates.",Vulnerable (VU),6,,https://www.nddb.coop/campus/Trees/88_Jacaranda.html,TRUE,6,1
+88,Royal Poinciana,Delonix regia (Boj. ex Hook.) Raf.,Gulmohar (गुलमोहर),Madagascar,India Southeast Asia The Caribbean Africa Australia And many other tropical locations,Least Concern (LC),4,,https://www.nddb.coop/campus/Trees/89_RoyalPoinciana.html,TRUE,16,1
+89,Fishtail Palm,Caryota mitis Lour.,बन खजूर (ban khajur),"Southeast Asia (specifically Malaysia, Indonesia, and the Philippines)","Widely cultivated in tropical and subtropical regions worldwide as an ornamental plant, both indoors and outdoors.",Least Concern (LC),34,,https://www.nddb.coop/campus/Trees/90_FishtailPalm.html,TRUE,4,1
+90,Traveller's Palm,Ravenala madagascariensis Sonn.,सफ़र का ताड़ (Safar ka Taad),Madagascar,It is also cultivated in many tropical regions worldwide as an ornamental plant.,Least Concern (LC),15+,,https://www.nddb.coop/campus/Trees/91_TravellersPalm.html,TRUE,44,1
+91,Wild Date Palm,Phoenix sylvestris (L.) Roxb.,Khajoor (खजूर),"India, Pakistan, Nepal, Bangladesh, and Myanmar.","Primarily throughout the plains of India and Pakistan. Also found in Nepal, Bhutan, Myanmar, and Bangladesh. It has also been introduced to other regions.",Least Concern (LC),10+,,https://www.nddb.coop/campus/Trees/92_WildDatePalm.html,TRUE,4,1
+92,Areca Palm,Dypsis lutescens (H.Wendl.) Beentje & J.Dransf.,एरेका पाम (Areka Pam),Madagascar,"Widely cultivated in tropical and subtropical regions worldwide as an ornamental plant, both indoors and outdoors.",Near Threatened (NT),350+,,https://www.nddb.coop/campus/Trees/93_ArecaPalm.html,TRUE,4,1
+93,Lady Palm,Dypsis lutescens (H.Wendl.) Beentje & J.Dransf.,रैफिस (Raphis),Southern China and Taiwan,"Widely cultivated in tropical and subtropical regions worldwide as an ornamental plant, both indoors and outdoors.",Near Threatened (NT),15+,,https://www.nddb.coop/campus/Trees/94_LadyPalm.html,TRUE,4,1
+94,Pomelo,Citrus maxima (Burm.) Merr.,चकोतरा (Chakotra),"Malaysia, Indonesia, Thailand, Possibly Polynesia.","Southeast Asia, China, India, The Pacific Islands, Parts of the Americas (including Florida, California, and the Caribbean).",Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/95_Pomelo.html,TRUE,38,1
+95,Northern White-Cedar,Thuja occidentalis L.,थूजा (Thuja),Eastern Canada and much of the north-central and northeastern United States.,North-central and northeastern United States,Least Concern (LC),20+,,https://www.nddb.coop/campus/Trees/96_NWhiteCedar.html,TRUE,45,1
+96,Thai Crape Myrtle,Lagerstroemia floribunda Jack,लैगरस्ट्रोमिया (Lagerstroemia),The tropical region of Southeast Asia.,"Myanmar, Thailand, Cambodia, Laos, Vietnam, Peninsular Malaysia.",Not Available,5,,https://www.nddb.coop/campus/Trees/97_ThaiCrapeMyrtle.html,TRUE,21,1
+97,Queen Palm,Syagrus romanzoffiana (Cham.) Glassman,रानी पाम (Rani Palm),"South America (Brazil, Paraguay, Uruguay, and Argentina)","The United States (particularly Florida and California), Australia, Mediterranean regions, India",Not Available,9+,,https://www.nddb.coop/campus/Trees/98_QueenPalm.html,TRUE,4,1
+98,Bismarckia Palm,Bismarckia nobilis Hildebr. & H.Wendl.,-,Madagascar,-,-,-,,https://www.nddb.coop/campus/Trees/99_BismarckiaNobilis.html,TRUE,4,2
+99,Phoenix Palm,Phonex palm ,-,"Varies by species within the Phoenix genus (e.g., Phoenix dactylifera is from the Middle East, Phoenix canariensis is from the Canary Islands).",-,-,-,,https://www.nddb.coop/campus/Trees/100_PhoenixPalm.html,TRUE,4,2
+100,Son Champa,Magnolia champaca (L.) Baill. ex Pierre ,चंपा (Champa),South India to South Central China and Lesser Sunda Islands.,India Bangladesh Bhutan Myanmar Nepal Southwest China Malaysia Thailand,Least Concern (LC),1,,https://www.nddb.coop/campus/Trees/101_MagnoliaChampaca.html,TRUE,22,2
+101,Baobab,Adensonia digitata L.,गोरख इमली (Gorakh Imli),mainland Africa,Primarily found in the dry savannas of sub-Saharan Africa. Also occurs in the Arabian Peninsula. It is widespread throughout tropical Africa.,Endangered,1,,https://www.nddb.coop/campus/Trees/102_AdansoniaDigitata.html,TRUE,23,2
+102,Powder Puff Plant,Calliandra haematocephala Hassk.,-,South America,-,-,-,,https://www.nddb.coop/campus/Trees/103_Callinandra_Haematocephala.html,TRUE,16,2
+103,Orange Jessamine,Murraya paniculata,-,"	Southeast Asia, Southern China, and Australia",-,- ,-,,https://www.nddb.coop/campus/Trees/104_MurrayaPaniculata.html,TRUE,38,2
+104,Annatto,Bixa orellana L.,सिंदूरी (Sinduri),"Tropical regions of the Americas, likely originating in South America.",Central and South America The Caribbean India Southeast Asia Africa,Least Concern (LC),2,,https://www.nddb.coop/campus/Trees/105_Bixaorellana.html,TRUE,47,2
+105,Pomegranate,Punjca granatum,-,Iran to the Himalayas,-,-,-,,https://www.nddb.coop/campus/Trees/106_Punicagranatum.html,TRUE,49,2
+106,Madagascar Periwinkle,Catharanthus roseus,-,Madagascar,-,-,-,,https://www.nddb.coop/campus/Trees/107_CatharanthusRoseus.html,TRUE,3,2
+107,Crossandra infundibuliformis,Crossandra infundibuliformis,-,Southern India and Sri Lanka,-,-,-,,https://www.nddb.coop/campus/Trees/108_Crossandra_infundibuliformis.html,TRUE,51,2
+108,Moringa oleifera Lam.,Moringa oleifera Lam.,-,India,-,-,-,,https://www.nddb.coop/campus/Trees/109_Moringa_oleifera.html,TRUE,50,2
+109,Cassava,Manihot esculanta,-,South America,-,-,-,,https://www.nddb.coop/campus/Trees/110_Manihot_esculenta.html,TRUE,48,2
+110,"Night-flowering Jasmine, Parijat",Nyctanthus arbortristis ( parijat),-,Southern Asia,-,-,-,,https://www.nddb.coop/campus/Trees/111_Nyctanthes_arbor-tristisTree.html,TRUE,46,2
+111,Palai, Manilkara hexandra (Roxb.) Dubard,-,India and Sri Lanka,-,-,-,,https://www.nddb.coop/campus/Trees/112_Manilkarahexandra.html,TRUE,41,2
+112,Peacock Flower,Ceasalpinia pulcherima,-,Tropical America,-,-,-,,https://www.nddb.coop/campus/Trees/113_Caesalpinia_pulcherrima.html,TRUE,16,2
+113,Cuban Royal Palm,Royatenia regia,-,Cuba,-,-,-,,https://www.nddb.coop/campus/Trees/114_RoystoneaRegia.html,TRUE,4,2
+114,"Areca Palm, Golden Cane Palm",Chrysalidocarpus lutescens Wendland,-,Madagascar,-,-,-,,https://www.nddb.coop/campus/Trees/115_Chrysalidocarpus.html,TRUE,4,2
+115,Rain Tree,Albizia saman,-,Tropical America,-,-,-,,https://www.nddb.coop/campus/Trees/116_Albizia_saman.html,TRUE,16,2
