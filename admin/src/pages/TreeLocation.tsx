@@ -90,7 +90,7 @@ const TreeLocation = () => {
         // Override speciesid with selectedSpeciesId from dropdown
         const data = {
             ...formData,
-            speciesid: selectedSpeciesId
+            speciesId: Number(selectedSpeciesId)
         };
 
         try {
@@ -203,13 +203,10 @@ const TreeLocation = () => {
                     </DrawerHeader>
                     <div className="p-4 space-y-4">
                         <div>
-                            <Label>Species</Label>
-                            <p className="text-lg">[ID: {viewGeolocation?.speciesid}] {viewGeolocation?.treename}</p>
+                            <Label>Species details</Label>
+                            <p className="text-lg">ID : {viewGeolocation?.speciesid}<br /> Name : {viewGeolocation?.treename}</p>
                         </div>
-                        <div>
-                            <Label>Scientific Name</Label>
-                            <p className="text-lg">{viewGeolocation?.Scientificname || 'N/A'}</p>
-                        </div>
+
                         <div>
                             <Label>Longitude</Label>
                             <p className="text-lg">{viewGeolocation?.longitude}</p>

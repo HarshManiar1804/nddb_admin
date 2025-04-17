@@ -32,18 +32,18 @@ interface Species {
     id: number;
     treename: string;
     scientificname: string;
-    hindiname?: string;
-    centreoforigin?: string;
-    geographicaldistribution?: string;
-    iucnstatus?: string;
+    hindiname: string;
+    centreoforigin: string;
+    geographicaldistribution: string;
+    iucnstatus: string;
     totalnddbcampus: number;
     qrcode?: string;
-    link?: string;
+    link: string;
     isactive: boolean;
     botanyid: number;
-    campusid?: number;
-    botany_name?: string;
-    campus_name?: string;
+    campusid: number;
+    botany_name: string;
+    campus_name: string;
 }
 
 interface SpeciesFormData extends Omit<Species, 'id' | 'botany_name' | 'campus_name'> { }
@@ -110,6 +110,7 @@ const Species = () => {
     }, []);
 
     const createOrUpdateSpecies = useCallback(async (speciesData: SpeciesFormData) => {
+        console.log(speciesData)
         try {
             if (editingSpecies) {
                 const confirmUpdate = window.confirm('Are you sure you want to update this species?');
@@ -198,8 +199,8 @@ const Species = () => {
     }
 
     return (
-        <div>
-            <div className="flex items-center justify-between">
+        <div className='w-[1200px]'>
+            <div className="flex items-center justify-between ">
                 <h2 className="text-2xl font-bold">Species Management</h2>
                 <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                     <DrawerTrigger asChild>
@@ -348,7 +349,6 @@ const Species = () => {
                             </div>
 
                             <DrawerFooter>
-
                                 <Button type="submit" className='cursor-pointer'>{editingSpecies ? 'Update Species' : 'Add Species'}</Button>
                                 <DrawerClose >
                                     <Button variant="outline" type="button" className='cursor-pointer w-full'>Cancel</Button>
@@ -366,7 +366,7 @@ const Species = () => {
                             <DrawerDescription>Viewing detailed information for this species.</DrawerDescription>
                         </DrawerHeader>
                         {viewingSpecies && (
-                            <div className="p-2 space-y-4">
+                            <div className="p-2 space-y-2">
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                     <div>
                                         <h3 className="font-bold">Tree Name</h3>
@@ -434,7 +434,7 @@ const Species = () => {
                     <TableRow>
                         <TableHead>#</TableHead>
                         <TableHead>Tree Name</TableHead>
-                        <TableHead>Scientific Name</TableHead>
+                        {/* <TableHead>Scientific Name</TableHead> */}
                         <TableHead>Hindi Name</TableHead>
                         <TableHead>Botany</TableHead>
                         <TableHead>Campus</TableHead>
@@ -449,7 +449,7 @@ const Species = () => {
                         <TableRow key={spec.id}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{spec.treename}</TableCell>
-                            <TableCell><span className="italic">{spec.scientificname}</span></TableCell>
+                            {/* <TableCell><span className="italic">{spec.scientificname}</span></TableCell> */}
                             <TableCell>{spec.hindiname || 'N/A'}</TableCell>
                             <TableCell>{spec.botany_name}</TableCell>
                             <TableCell>{spec.campus_name || 'N/A'}</TableCell>

@@ -11,45 +11,53 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { X, Pencil, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Species {
     id: string;
     name: string;
+    treename: string; // Added to match with API response
 }
 
 interface SpeciesUsage {
     id: string;
     speciesid: string;
     usagetitle: string;
-    UsageDescription: string;
+    usagedescription: string;
     species?: Species;
 }
-
 
 interface SpeciesUsageFormData {
     speciesId: string;
     UsageTitle: string;
-    UsageDescription: string;
+    usagedescription: string;
 }
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const SpeciesUsage = () => {
     const [species, setSpecies] = useState<Species[]>([]);
-
     const [speciesUsages, setSpeciesUsages] = useState<SpeciesUsage[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
     const [editingSpeciesUsage, setEditingSpeciesUsage] = useState<SpeciesUsage | null>(null);
     const [viewingSpeciesUsage, setViewingSpeciesUsage] = useState<SpeciesUsage | null>(null);
+    const [selectedSpeciesId, setSelectedSpeciesId] = useState<string>('');
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<SpeciesUsageFormData>();
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<SpeciesUsageFormData>();
 
     useEffect(() => {
         fetchSpeciesUsages();
+        fetchSpecies();
     }, []);
 
     const fetchSpeciesUsages = useCallback(async () => {
@@ -64,24 +72,54 @@ const SpeciesUsage = () => {
         }
     }, []);
 
+    const fetchSpecies = useCallback(async () => {
+        try {
+            const { data } = await axios.get(`${API_URL}/species/details`);
+            setSpecies(data.data);
+        } catch (error) {
+            console.error('Error fetching species:', error);
+            toast.error('Failed to load species list');
+        }
+    }, []);
+
+    const handleSpeciesChange = (value: string) => {
+        setSelectedSpeciesId(value);
+    };
+
     const handleSave = useCallback(async (data: SpeciesUsageFormData) => {
         try {
+            // Use the selected species ID from the dropdown
+            const finalData = {
+                ...data,
+                speciesId: Number(selectedSpeciesId)
+            };
+
             if (editingSpeciesUsage) {
                 const confirmUpdate = window.confirm('Are you sure you want to update this species usage?');
                 if (!confirmUpdate) return;
-                await axios.put(`${API_URL}/species-usage/${editingSpeciesUsage.id}`, data);
+                await axios.put(`${API_URL}/species-usage/${editingSpeciesUsage.id}`, finalData);
                 toast.success('Species usage updated successfully');
             } else {
-                await axios.post(`${API_URL}/species-usage`, data);
+                await axios.post(`${API_URL}/species-usage`, finalData);
                 toast.success('Species usage added successfully');
             }
             setIsDrawerOpen(false);
             reset();
+            setSelectedSpeciesId('');
             fetchSpeciesUsages();
         } catch (error) {
-            toast.error('Failed to save species usage', error);
+            toast.error('Failed to save species usage');
+            console.error(error);
         }
-    }, [editingSpeciesUsage, fetchSpeciesUsages, reset]);
+    }, [editingSpeciesUsage, fetchSpeciesUsages, reset, selectedSpeciesId]);
+
+    const handleEdit = (usage: SpeciesUsage) => {
+        setEditingSpeciesUsage(usage);
+        setSelectedSpeciesId(usage.speciesid);
+        setValue('UsageTitle', usage.usagetitle);
+        setValue('usagedescription', usage.usagedescription);
+        setIsDrawerOpen(true);
+    };
 
     const handleDelete = useCallback(async (id: string) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this species usage?');
@@ -91,7 +129,8 @@ const SpeciesUsage = () => {
             fetchSpeciesUsages();
             toast.success('Species usage deleted successfully');
         } catch (error) {
-            toast.error('Failed to delete species usage', error);
+            toast.error('Failed to delete species usage');
+            console.error(error);
         }
     }, [fetchSpeciesUsages]);
 
@@ -105,7 +144,11 @@ const SpeciesUsage = () => {
                 <h2 className="text-2xl font-bold">Species Usage Management</h2>
                 <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                     <DrawerTrigger asChild>
-                        <Button className="cursor-pointer" onClick={() => setEditingSpeciesUsage(null)}>Add New Species Usage</Button>
+                        <Button className="cursor-pointer" onClick={() => {
+                            setEditingSpeciesUsage(null);
+                            setSelectedSpeciesId('');
+                            reset();
+                        }}>Add New Species Usage</Button>
                     </DrawerTrigger>
                     <DrawerContent>
                         <form onSubmit={handleSubmit(handleSave)}>
@@ -114,23 +157,27 @@ const SpeciesUsage = () => {
                                 <DrawerDescription>{editingSpeciesUsage ? 'Update species usage details.' : 'Enter species usage details.'}</DrawerDescription>
                             </DrawerHeader>
                             <div className="p-4 space-y-4">
-                                <div>
-                                    <Label htmlFor="UsageTitle">Species Id</Label>
-                                    <Input
-                                        id="SpeciedId"
-                                        {...register("speciesId", { required: "SpeciedId is required" })}
-                                        defaultValue={editingSpeciesUsage?.speciesid}
-                                        placeholder="Enter speciesId"
-                                        type='number'
-                                    />
-                                    {errors.speciesId && <p className="text-sm text-red-500">{errors.speciesId.message}</p>}
+                                <div className="space-y-2">
+                                    <Label htmlFor="speciesId">Species</Label>
+                                    <Select value={selectedSpeciesId} onValueChange={handleSpeciesChange}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select a species" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {species.map((s) => (
+                                                <SelectItem key={s.id} value={s.id.toString()}>
+                                                    {` ${s.id} : ${s.treename}`}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
                                 </div>
                                 <div>
                                     <Label htmlFor="UsageTitle">Usage Title</Label>
                                     <Input
                                         id="UsageTitle"
                                         {...register("UsageTitle", { required: "Usage title is required" })}
-                                        defaultValue={editingSpeciesUsage?.usagetitle}
                                         placeholder="Enter usage title"
                                     />
                                     {errors.UsageTitle && <p className="text-sm text-red-500">{errors.UsageTitle.message}</p>}
@@ -140,14 +187,15 @@ const SpeciesUsage = () => {
                                     <Textarea
                                         id="UsageDescription"
                                         {...register("UsageDescription")}
-                                        defaultValue={editingSpeciesUsage?.UsageDescription}
                                         placeholder="Enter usage description"
                                         rows={5}
                                     />
                                 </div>
                             </div>
                             <DrawerFooter>
-                                <Button type="submit">{editingSpeciesUsage ? 'Update Usage' : 'Add Usage'}</Button>
+                                <Button type="submit" disabled={!selectedSpeciesId}>
+                                    {editingSpeciesUsage ? 'Update Usage' : 'Add Usage'}
+                                </Button>
                                 <DrawerClose asChild>
                                     <Button variant="outline" type="button">Cancel</Button>
                                 </DrawerClose>
@@ -167,7 +215,9 @@ const SpeciesUsage = () => {
                     <div className="p-4 space-y-4">
                         <div>
                             <Label>Species</Label>
-                            <p className="text-lg">{viewingSpeciesUsage ? viewingSpeciesUsage.speciesId : ''}</p>
+                            <p className="text-lg">
+                                {viewingSpeciesUsage && species.find(s => s.id === viewingSpeciesUsage.speciesid)?.treename || viewingSpeciesUsage?.speciesid}
+                            </p>
                         </div>
                         <div>
                             <Label>Usage Title</Label>
@@ -175,7 +225,7 @@ const SpeciesUsage = () => {
                         </div>
                         <div>
                             <Label>Usage Description</Label>
-                            <p className="text-base whitespace-pre-wrap">{viewingSpeciesUsage?.UsageDescription}</p>
+                            <p className="text-base whitespace-pre-wrap">{viewingSpeciesUsage?.usagedescription}</p>
                         </div>
                     </div>
                     <DrawerFooter>
@@ -202,7 +252,9 @@ const SpeciesUsage = () => {
                     {speciesUsages.map((item, index) => (
                         <TableRow key={item.id}>
                             <TableCell>{index + 1}</TableCell>
-                            <TableCell>{item.speciesid}</TableCell>
+                            <TableCell>
+                                {species.find(s => s.id === item.speciesid)?.treename || item.speciesid}
+                            </TableCell>
                             <TableCell className="font-medium">{item.usagetitle}</TableCell>
                             <TableCell>
                                 <Button
@@ -222,10 +274,7 @@ const SpeciesUsage = () => {
                                     variant="outline"
                                     size="sm"
                                     className="cursor-pointer"
-                                    onClick={() => {
-                                        setEditingSpeciesUsage(item);
-                                        setIsDrawerOpen(true);
-                                    }}
+                                    onClick={() => handleEdit(item)}
                                 >
                                     <Pencil className="h-4 w-4" />
                                 </Button>

@@ -80,7 +80,7 @@ const TreeImage = () => {
         // Ensure the speciesid is set from the dropdown selection
         const finalData = {
             ...imageData,
-            speciesid: selectedSpeciesId
+            speciesId: Number(selectedSpeciesId)
         };
 
         try {

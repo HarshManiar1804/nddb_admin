@@ -88,30 +88,20 @@ exports.getImageById = async (req, res, next) => {
  */
 exports.createImage = async (req, res, next) => {
   try {
-    const { speciesid, imageType, imageUrl } = req.body;
+    const { speciesId, imagetype, imageurl } = req.body;
 
     // Validate input
-    if (!speciesid || !imageUrl) {
+    if (!speciesId || !imageurl || !imagetype) {
       return res.status(400).json({
         success: false,
-        error: "Please provide speciesid and imageUrl",
+        error: "Please provide speciesid , imagetype and imageUrl",
       });
     }
 
-    // Check if species exists
-    const speciesCheck = await db.getById("Species", speciesid);
-
-    if (speciesCheck.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: "Species not found",
-      });
-    }
-
-    const result = await db.insert("Trees_Image", {
-      speciesid: speciesid,
-      imagetype: imageType || null,
-      imageurl: imageUrl,
+    const result = await db.insert("trees_image", {
+      speciesid: speciesId,
+      imagetype: imagetype || null,
+      imageurl: imageurl,
     });
 
     res.status(201).json({
@@ -131,11 +121,11 @@ exports.createImage = async (req, res, next) => {
  */
 exports.updateImage = async (req, res, next) => {
   try {
-    const { speciesid, imageType, imageUrl } = req.body;
+    const { speciesId, imagetype, imageurl } = req.body;
     const imageId = req.params.id;
 
     // Check if image exists
-    const checkResult = await db.getById("Trees_Image", imageId);
+    const checkResult = await db.getById("trees_image", imageId);
 
     if (checkResult.rows.length === 0) {
       return res.status(404).json({
@@ -147,22 +137,10 @@ exports.updateImage = async (req, res, next) => {
     // Prepare update data
     const updateData = {};
 
-    if (speciesid) {
-      // Check if species exists
-      const speciesCheck = await db.getById("Species", speciesid);
+    updateData.speciesid = speciesId;
 
-      if (speciesCheck.rows.length === 0) {
-        return res.status(404).json({
-          success: false,
-          error: "Species not found",
-        });
-      }
-
-      updateData.speciesid = speciesid;
-    }
-
-    if (imageType !== undefined) updateData.imagetype = imageType;
-    if (imageUrl) updateData.imageurl = imageUrl;
+    if (imagetype !== undefined) updateData.imagetype = imagetype;
+    if (imageurl) updateData.imageurl = imageurl;
 
     // If no fields to update
     if (Object.keys(updateData).length === 0) {

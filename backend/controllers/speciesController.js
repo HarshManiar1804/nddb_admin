@@ -58,37 +58,9 @@ exports.getSpeciesById = async (req, res, next) => {
       });
     }
 
-    // Get related geolocation data
-    const geoResult = await db.query(
-      "SELECT * FROM Trees_Geolocation WHERE SpeciesID = $1",
-      [speciesId]
-    );
-
-    // Get related image data
-    const imageResult = await db.query(
-      "SELECT * FROM Trees_Image WHERE SpeciesID = $1",
-      [speciesId]
-    );
-
-    // Get related usage data
-    const usageResult = await db.query(
-      "SELECT * FROM Species_Usage WHERE SpeciesID = $1",
-      [speciesId]
-    );
-
-    // Get related symbols data
-    const symbolsResult = await db.query(
-      "SELECT * FROM Species_Symbols WHERE SpeciesID = $1",
-      [speciesId]
-    );
-
     // Combine all data
     const speciesData = {
       ...speciesResult.rows[0],
-      geolocations: geoResult.rows,
-      images: imageResult.rows,
-      usages: usageResult.rows,
-      symbols: symbolsResult.rows,
     };
 
     res.status(200).json({
@@ -109,38 +81,38 @@ exports.getSpeciesById = async (req, res, next) => {
 exports.createSpecies = async (req, res, next) => {
   try {
     const {
-      treeName,
-      scientificName,
-      hindiName,
-      centreOfOrigin,
-      geographicalDistribution,
-      iucnStatus,
-      totalNDDBCampus,
-      qrCode,
+      treename,
+      scientificname,
+      hindiname,
+      centreoforigin,
+      geographicaldistribution,
+      iucnstatus,
+      totalnddbcampus,
+      qrcode,
       link,
-      botanyId,
-      campusId,
+      botanyid,
+      campusid,
     } = req.body;
 
     // Set the current user as creator
     const userData = {
-      treeName: treeName,
-      scientificName: scientificName,
-      hindiName: hindiName || null,
-      centreOfOrigin: centreOfOrigin || null,
-      geographicalDistribution: geographicalDistribution || null,
-      iucnStatus: iucnStatus || null,
-      totalNDDBCampus: totalNDDBCampus || 0,
-      qrCode: qrCode || null,
-      link: link || null,
-      botanyId: botanyId,
-      campusId: campusId || null,
+      treename: treename,
+      scientificname: scientificname,
+      hindiname: hindiname,
+      centreoforigin: centreoforigin,
+      geographicaldistribution: geographicaldistribution,
+      iucnstatus: iucnstatus,
+      totalnddbcampus: totalnddbcampus || 0,
+      qrcode: qrcode || null,
+      link: link,
+      botanyid: botanyid,
+      campusid: campusid,
     };
 
     // Insert the species record
     const result = await db.query(
       `
-      INSERT INTO Species (
+      INSERT INTO species (
         treename, scientificname, hindiname, centreoforigin, 
         geographicaldistribution, iucnstatus, totalnddbcampus, 
         qrcode, link, botanyid, campusid
@@ -149,17 +121,17 @@ exports.createSpecies = async (req, res, next) => {
       ) RETURNING *
     `,
       [
-        userData.treeName,
-        userData.scientificName,
-        userData.hindiName,
-        userData.centreOfOrigin,
-        userData.geographicalDistribution,
-        userData.iucnStatus,
-        userData.totalNDDBCampus,
-        userData.qrCode,
+        userData.treename,
+        userData.scientificname,
+        userData.hindiname,
+        userData.centreoforigin,
+        userData.geographicaldistribution,
+        userData.iucnstatus,
+        userData.totalnddbcampus,
+        userData.qrcode,
         userData.link,
-        userData.botanyId,
-        userData.campusId,
+        userData.botanyid,
+        userData.campusid,
       ]
     );
 
@@ -194,18 +166,18 @@ exports.updateSpecies = async (req, res, next) => {
 
     // Extract fields from request body
     const {
-      treeName,
-      scientificName,
-      hindiName,
-      centreOfOrigin,
-      geographicalDistribution,
-      iucnStatus,
-      totalNDDBCampus,
-      qrCode,
+      treename,
+      scientificname,
+      hindiname,
+      centreoforigin,
+      geographicaldistribution,
+      iucnstatus,
+      totalnddbcampus,
+      qrcode,
       link,
-      isActive,
-      botanyId,
-      campusId,
+      isactive,
+      botanyid,
+      campusid,
     } = req.body;
 
     // Build update fields and values
@@ -213,44 +185,44 @@ exports.updateSpecies = async (req, res, next) => {
     const values = [];
     let paramCount = 1;
 
-    if (treeName !== undefined) {
-      fields.push(`TreeName = $${paramCount++}`);
-      values.push(treeName);
+    if (treename !== undefined) {
+      fields.push(`treename = $${paramCount++}`);
+      values.push(treename);
     }
 
-    if (scientificName !== undefined) {
-      fields.push(`ScientificName = $${paramCount++}`);
-      values.push(scientificName);
+    if (scientificname !== undefined) {
+      fields.push(`scientificname = $${paramCount++}`);
+      values.push(scientificname);
     }
 
-    if (hindiName !== undefined) {
-      fields.push(`HindiName = $${paramCount++}`);
-      values.push(hindiName);
+    if (hindiname !== undefined) {
+      fields.push(`hindiname = $${paramCount++}`);
+      values.push(hindiname);
     }
 
-    if (centreOfOrigin !== undefined) {
-      fields.push(`CentreOfOrigin = $${paramCount++}`);
-      values.push(centreOfOrigin);
+    if (centreoforigin !== undefined) {
+      fields.push(`centreoforigin = $${paramCount++}`);
+      values.push(centreoforigin);
     }
 
-    if (geographicalDistribution !== undefined) {
-      fields.push(`GeographicalDistribution = $${paramCount++}`);
-      values.push(geographicalDistribution);
+    if (geographicaldistribution !== undefined) {
+      fields.push(`geographicaldistribution = $${paramCount++}`);
+      values.push(geographicaldistribution);
     }
 
-    if (iucnStatus !== undefined) {
-      fields.push(`IUCNStatus = $${paramCount++}`);
-      values.push(iucnStatus);
+    if (iucnstatus !== undefined) {
+      fields.push(`iucnstatus = $${paramCount++}`);
+      values.push(iucnstatus);
     }
 
-    if (totalNDDBCampus !== undefined) {
-      fields.push(`TotalNDDBCampus = $${paramCount++}`);
-      values.push(totalNDDBCampus);
+    if (totalnddbcampus !== undefined) {
+      fields.push(`totalnddbcampus = $${paramCount++}`);
+      values.push(totalnddbcampus);
     }
 
-    if (qrCode !== undefined) {
-      fields.push(`QRCode = $${paramCount++}`);
-      values.push(qrCode);
+    if (qrcode !== undefined) {
+      fields.push(`qrcode = $${paramCount++}`);
+      values.push(qrcode);
     }
 
     if (link !== undefined) {
@@ -258,25 +230,19 @@ exports.updateSpecies = async (req, res, next) => {
       values.push(link);
     }
 
-    if (isActive !== undefined) {
-      fields.push(`IsActive = $${paramCount++}`);
-      values.push(isActive);
+    if (isactive !== undefined) {
+      fields.push(`isactive = $${paramCount++}`);
+      values.push(isactive);
     }
 
-    if (botanyId !== undefined) {
-      fields.push(`BotanyID = $${paramCount++}`);
-      values.push(botanyId);
+    if (botanyid !== undefined) {
+      fields.push(`botanyid = $${paramCount++}`);
+      values.push(botanyid);
     }
 
-    if (campusId !== undefined) {
-      fields.push(`CampusID = $${paramCount++}`);
-      values.push(campusId);
-    }
-
-    // Add the modify user and set the ModifyDate
-    if (req.user) {
-      fields.push(`ModifyBy = $${paramCount++}`);
-      values.push(req.user.id);
+    if (campusid !== undefined) {
+      fields.push(`campusid = $${paramCount++}`);
+      values.push(campusid);
     }
 
     // If no fields to update
@@ -339,7 +305,7 @@ exports.deleteSpecies = async (req, res, next) => {
 exports.getSpeciesIDandName = async (req, res, next) => {
   try {
     const result = await db.query(`
-      SELECT id,treename from species;
+      SELECT id,treename from species ORDER BY id ASC;
     `);
     res.status(200).json({
       success: true,
