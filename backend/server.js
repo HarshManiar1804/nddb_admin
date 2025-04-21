@@ -26,6 +26,8 @@ const speciesRoutes = require("./routes/speciesRoutes");
 const treesGeolocationRoutes = require("./routes/treesGeolocationRoutes");
 const treesImageRoutes = require("./routes/treesImageRoutes");
 const speciesUsageRoutes = require("./routes/speciesUsageRoutes");
+const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 // Mount routes
 app.use("/api/campus", campusRoutes); // done
@@ -34,6 +36,8 @@ app.use("/api/species", speciesRoutes); // done
 app.use("/api/trees-geolocation", treesGeolocationRoutes); //done
 app.use("/api/trees-image", treesImageRoutes); // done
 app.use("/api/species-usage", speciesUsageRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Basic route
 app.get("/", (req, res) => {
