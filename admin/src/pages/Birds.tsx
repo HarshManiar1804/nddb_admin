@@ -33,7 +33,7 @@ interface Bird {
     birdname: string;
     scientificname: string;
     birds_type: number;
-    birds_type_name: string;
+    bird_type_name: string;
     iucnstatus: string;
     migrationstatus: string;
     foodpreference: string;
@@ -50,11 +50,12 @@ interface Bird {
 interface BirdFormData extends Omit<Bird, 'id' | 'birds_type_name'> { }
 
 interface BirdType {
-    id: number;
-    name: string;
+    id: number;  // or string, depending on your backend
+    type: string; // This should be 'type' not 'name' based on your controller
+    hindi?: string; // Include this if you need it
 }
 
-const API_URL = 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Birds = () => {
     const [birds, setBirds] = useState<Bird[]>([]);
@@ -76,7 +77,7 @@ const Birds = () => {
         try {
             setLoading(true);
             const { data } = await axios.get(`${API_URL}/birds`);
-            setBirds(data.data);
+            setBirds(data);
         } catch (error) {
             console.error('Error fetching birds:', error);
             toast.error('Failed to fetch birds');
@@ -87,8 +88,8 @@ const Birds = () => {
 
     const fetchBirdTypes = useCallback(async () => {
         try {
-            const { data } = await axios.get(`${API_URL}/birds-types`);
-            setBirdTypes(data.data);
+            const response = await axios.get(`${API_URL}/bird-types`); // Make sure this endpoint is correct
+            setBirdTypes(response.data); // Adjust if your API returns data in a nested structure
         } catch (error) {
             console.error('Error fetching bird types:', error);
             toast.error('Failed to fetch bird types');
@@ -186,7 +187,7 @@ const Birds = () => {
     if (loading && birds.length === 0) {
         return <div>Loading birds data...</div>;
     }
-
+    console.log(birds)
     return (
         <div className="w-full max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-6">
@@ -233,11 +234,15 @@ const Birds = () => {
                                             })}
                                             className="w-full p-2 border rounded"
                                         >
-                                            {birdTypes.map(type => (
-                                                <option key={type.id} value={type.id}>
-                                                    {type.name}
-                                                </option>
-                                            ))}
+                                            {birdTypes.length > 0 ? (
+                                                birdTypes.map(type => (
+                                                    <option key={type.id} value={type.id}>
+                                                        {type.type}{type.hindi ? ` (${type.hindi})` : ''}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                <option value="">No bird types available</option>
+                                            )}
                                         </select>
                                         {errors.birds_type && <p className="text-sm text-red-500">Bird Type is required</p>}
                                     </div>
@@ -446,7 +451,6 @@ const Birds = () => {
                         <TableHead>Bird Name</TableHead>
                         <TableHead>Scientific Name</TableHead>
                         <TableHead>Bird Type</TableHead>
-                        <TableHead>IUCN Status</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>View</TableHead>
                         <TableHead>Edit</TableHead>
@@ -459,8 +463,8 @@ const Birds = () => {
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{bird.birdname}</TableCell>
                             <TableCell><span className="italic">{bird.scientificname}</span></TableCell>
-                            <TableCell>{bird.birds_type_name}</TableCell>
-                            <TableCell>{bird.iucnstatus || 'N/A'}</TableCell>
+                            <TableCell>{bird.bird_type_name || 'N/A'}</TableCell>
+
                             <TableCell>
                                 <span className={`px-2 py-1 rounded text-xs ${bird.isactive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                                     {bird.isactive ? 'Active' : 'Inactive'}

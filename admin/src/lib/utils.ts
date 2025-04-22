@@ -90,4 +90,5 @@ export const routes = [
     icon: BarChart,
   },
   { path: "/birds", name: "Birds ", icon: BarChart },
+  { path: "/birds-type", name: "Birds-Type ", icon: BarChart },
 ];

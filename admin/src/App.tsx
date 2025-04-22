@@ -13,6 +13,7 @@ import TreeImage from "./pages/TreeImage";
 import SpeciesUsage from "./pages/SpeciesUsage";
 import SignIn from "./components/SignIn"; // Import the SignIn component
 import BirdManagement from "./pages/Birds";
+import BirdTypes from "./pages/BirdsType";
 
 // Layout component to maintain consistent structure
 const Layout = () => {
@@ -83,6 +84,7 @@ function App() {
           <Route path="/tree-image" element={<TreeImage />} />
           <Route path="/species-usage" element={<SpeciesUsage />} />
           <Route path="/birds" element={<BirdManagement />} />
+          <Route path="/birds-type" element={<BirdTypes />} />
         </Route>
 
         {/* Redirect to signin for any unmatched routes */}
