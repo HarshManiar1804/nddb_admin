@@ -26,6 +26,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const Botany = () => {
     const [botanies, setBotanies] = useState<Botany[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
@@ -81,45 +82,57 @@ const Botany = () => {
         }
     }, [fetchBotanies]);
 
+    const filteredBotanies = botanies.filter((botany) =>
+        botany.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     if (loading) {
-        return <div>Loading botanies...</div>;
+        return <div className="p-6 text-center text-lg">Loading botanies...</div>;
     }
 
     return (
-        <div className="space-y-3">
-            <div className="flex items-center justify-between">
+        <div className="space-y-6 p-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <h2 className="text-2xl font-bold">Botany Management</h2>
-                <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                    <DrawerTrigger asChild>
-                        <Button className="cursor-pointer" onClick={() => setEditingBotany(null)}>Add New Botany</Button>
-                    </DrawerTrigger>
-                    <DrawerContent>
-                        <form onSubmit={handleSubmit(handleSave)}>
-                            <DrawerHeader>
-                                <DrawerTitle>{editingBotany ? 'Edit Botany' : 'Add New Botany'}</DrawerTitle>
-                                <DrawerDescription>{editingBotany ? 'Update botany details.' : 'Enter botany details.'}</DrawerDescription>
-                            </DrawerHeader>
-                            <div className="p-4 space-y-4">
-                                <div>
-                                    <Label htmlFor="name">Botany Name</Label>
-                                    <Input
-                                        id="name"
-                                        {...register("name", { required: "Botany name is required" })}
-                                        defaultValue={editingBotany?.name}
-                                        placeholder="Enter botany name"
-                                    />
-                                    {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <Input
+                        placeholder="Search botany by name..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="sm:w-64"
+                    />
+                    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                        <DrawerTrigger asChild>
+                            <Button className="w-full sm:w-auto" onClick={() => setEditingBotany(null)}>Add New Botany</Button>
+                        </DrawerTrigger>
+                        <DrawerContent>
+                            <form onSubmit={handleSubmit(handleSave)}>
+                                <DrawerHeader>
+                                    <DrawerTitle>{editingBotany ? 'Edit Botany' : 'Add New Botany'}</DrawerTitle>
+                                    <DrawerDescription>{editingBotany ? 'Update botany details.' : 'Enter botany details.'}</DrawerDescription>
+                                </DrawerHeader>
+                                <div className="p-4 space-y-4">
+                                    <div>
+                                        <Label htmlFor="name">Botany Name</Label>
+                                        <Input
+                                            id="name"
+                                            {...register("name", { required: "Botany name is required" })}
+                                            defaultValue={editingBotany?.name}
+                                            placeholder="Enter botany name"
+                                        />
+                                        {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+                                    </div>
                                 </div>
-                            </div>
-                            <DrawerFooter>
-                                <Button type="submit">{editingBotany ? 'Update Botany' : 'Add Botany'}</Button>
-                                <DrawerClose asChild>
-                                    <Button variant="outline" type="button">Cancel</Button>
-                                </DrawerClose>
-                            </DrawerFooter>
-                        </form>
-                    </DrawerContent>
-                </Drawer>
+                                <DrawerFooter>
+                                    <Button type="submit">{editingBotany ? 'Update Botany' : 'Add Botany'}</Button>
+                                    <DrawerClose asChild>
+                                        <Button variant="outline" type="button">Cancel</Button>
+                                    </DrawerClose>
+                                </DrawerFooter>
+                            </form>
+                        </DrawerContent>
+                    </Drawer>
+                </div>
             </div>
 
             {/* View Drawer */}
@@ -155,48 +168,54 @@ const Botany = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {botanies.map((item, index) => (
-                        <TableRow key={item.id}>
-                            <TableCell>{index + 1}</TableCell>
-                            <TableCell className="font-medium">{item.name}</TableCell>
-                            <TableCell>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                        setViewingBotany(item);
-                                        setIsViewDrawerOpen(true);
-                                    }}
-                                >
-                                    <Eye className="h-4 w-4" />
-                                </Button>
-                            </TableCell>
-                            <TableCell>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                        setEditingBotany(item);
-                                        setIsDrawerOpen(true);
-                                    }}
-                                >
-                                    <Pencil className="h-4 w-4" />
-                                </Button>
-                            </TableCell>
-                            <TableCell>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="cursor-pointer text-red-500 hover:text-red-700"
-                                    onClick={() => handleDelete(item.id)}
-                                >
-                                    <X className="h-4 w-4" />
-                                </Button>
+                    {filteredBotanies.length > 0 ? (
+                        filteredBotanies.map((item, index) => (
+                            <TableRow key={item.id}>
+                                <TableCell>{index + 1}</TableCell>
+                                <TableCell className="font-medium">{item.name}</TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                            setViewingBotany(item);
+                                            setIsViewDrawerOpen(true);
+                                        }}
+                                    >
+                                        <Eye className="h-4 w-4" />
+                                    </Button>
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                            setEditingBotany(item);
+                                            setIsDrawerOpen(true);
+                                        }}
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                    </Button>
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="text-red-500 hover:text-red-700"
+                                        onClick={() => handleDelete(item.id)}
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center text-gray-500">
+                                No botanies found.
                             </TableCell>
                         </TableRow>
-                    ))}
+                    )}
                 </TableBody>
             </Table>
         </div>

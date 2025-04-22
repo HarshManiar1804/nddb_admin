@@ -89,4 +89,5 @@ export const routes = [
     name: "Species Usage",
     icon: BarChart,
   },
+  { path: "/birds", name: "Birds ", icon: BarChart },
 ];

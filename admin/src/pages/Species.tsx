@@ -61,6 +61,8 @@ interface Campus {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 const Species = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+
     const [species, setSpecies] = useState<Species[]>([]);
     const [botanies, setBotanies] = useState<Botany[]>([]);
     const [campuses, setCampuses] = useState<Campus[]>([]);
@@ -69,6 +71,18 @@ const Species = () => {
     const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
     const [editingSpecies, setEditingSpecies] = useState<Species | null>(null);
     const [viewingSpecies, setViewingSpecies] = useState<any | null>(null);
+    const filteredSpecies = species.filter((spec) => {
+        const query = searchQuery.toLowerCase().trim();
+        return (
+            spec.treename.toLowerCase().includes(query) ||
+            spec.scientificname.toLowerCase().includes(query) ||
+            (spec.hindiname?.toLowerCase().includes(query) ?? false) ||
+            spec.botany_name.toLowerCase().includes(query) ||
+            (spec.campus_name?.toLowerCase().includes(query))
+        );
+    });
+
+
 
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<SpeciesFormData>();
 
@@ -202,230 +216,240 @@ const Species = () => {
         <div className='w-[1200px]'>
             <div className="flex items-center justify-between ">
                 <h2 className="text-2xl font-bold">Species Management</h2>
-                <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                    <DrawerTrigger asChild>
-                        <Button className='cursor-pointer' onClick={handleAddNewSpecies}>Add New Species</Button>
-                    </DrawerTrigger>
-                    <DrawerContent >
-                        <form onSubmit={handleSubmit(createOrUpdateSpecies)}>
-                            <DrawerHeader>
-                                <DrawerTitle>{editingSpecies ? 'Edit Species' : 'Add New Species'}</DrawerTitle>
-                                <DrawerDescription>Enter species details.</DrawerDescription>
-                            </DrawerHeader>
-                            <div className="p-1 space-y-3">
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <Label htmlFor="treename">Tree Name</Label>
-                                        <Input
-                                            id="treename"
-                                            {...register("treename", { required: true })}
-                                            placeholder="Enter Tree Name"
-                                        />
-                                        {errors.treename && <p className="text-sm text-red-500">Tree Name is required</p>}
-                                    </div>
+                <div className="my-4 flex items-center gap-4">
+                    <Input
+                        placeholder="Search by Tree Name or Scientific Name..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-72"
+                    />
 
-                                    <div>
-                                        <Label htmlFor="scientificname">Scientific Name</Label>
-                                        <Input
-                                            id="scientificname"
-                                            {...register("scientificname", { required: true })}
-                                            placeholder="Enter Scientific Name"
-                                        />
-                                        {errors.scientificname && <p className="text-sm text-red-500">Scientific Name is required</p>}
-                                    </div>
 
-                                    <div>
-                                        <Label htmlFor="hindiname">Hindi Name</Label>
-                                        <Input
-                                            id="hindiname"
-                                            {...register("hindiname")}
-                                            placeholder="Enter Hindi Name"
-                                        />
-                                    </div>
+                    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                        <DrawerTrigger asChild>
+                            <Button className='cursor-pointer' onClick={handleAddNewSpecies}>Add New Species</Button>
+                        </DrawerTrigger>
+                        <DrawerContent >
+                            <form onSubmit={handleSubmit(createOrUpdateSpecies)}>
+                                <DrawerHeader>
+                                    <DrawerTitle>{editingSpecies ? 'Edit Species' : 'Add New Species'}</DrawerTitle>
+                                    <DrawerDescription>Enter species details.</DrawerDescription>
+                                </DrawerHeader>
+                                <div className="p-1 space-y-3">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <Label htmlFor="treename">Tree Name</Label>
+                                            <Input
+                                                id="treename"
+                                                {...register("treename", { required: true })}
+                                                placeholder="Enter Tree Name"
+                                            />
+                                            {errors.treename && <p className="text-sm text-red-500">Tree Name is required</p>}
+                                        </div>
 
-                                    <div>
-                                        <Label htmlFor="centreoforigin">Centre of Origin</Label>
-                                        <Input
-                                            id="centreoforigin"
-                                            {...register("centreoforigin")}
-                                            placeholder="Enter Centre of Origin"
-                                        />
-                                    </div>
+                                        <div>
+                                            <Label htmlFor="scientificname">Scientific Name</Label>
+                                            <Input
+                                                id="scientificname"
+                                                {...register("scientificname", { required: true })}
+                                                placeholder="Enter Scientific Name"
+                                            />
+                                            {errors.scientificname && <p className="text-sm text-red-500">Scientific Name is required</p>}
+                                        </div>
 
-                                    <div className="md:col-span-2">
-                                        <Label htmlFor="geographicaldistribution">Geographical Distribution</Label>
-                                        <Textarea
-                                            id="geographicaldistribution"
-                                            {...register("geographicaldistribution")}
-                                            placeholder="Enter Geographical Distribution"
-                                        />
-                                    </div>
+                                        <div>
+                                            <Label htmlFor="hindiname">Hindi Name</Label>
+                                            <Input
+                                                id="hindiname"
+                                                {...register("hindiname")}
+                                                placeholder="Enter Hindi Name"
+                                            />
+                                        </div>
 
-                                    <div>
-                                        <Label htmlFor="iucnstatus">IUCN Status</Label>
-                                        <Input
-                                            id="iucnstatus"
-                                            {...register("iucnstatus")}
-                                            placeholder="Enter IUCN Status"
-                                        />
-                                    </div>
+                                        <div>
+                                            <Label htmlFor="centreoforigin">Centre of Origin</Label>
+                                            <Input
+                                                id="centreoforigin"
+                                                {...register("centreoforigin")}
+                                                placeholder="Enter Centre of Origin"
+                                            />
+                                        </div>
 
-                                    <div>
-                                        <Label htmlFor="totalnddbcampus">Total NDDB Campus</Label>
-                                        <Input
-                                            type="number"
-                                            id="totalnddbcampus"
-                                            {...register("totalnddbcampus", {
-                                                valueAsNumber: true,
-                                                min: 0
-                                            })}
-                                            placeholder="Enter Total NDDB Campus"
-                                        />
-                                    </div>
+                                        <div className="md:col-span-2">
+                                            <Label htmlFor="geographicaldistribution">Geographical Distribution</Label>
+                                            <Textarea
+                                                id="geographicaldistribution"
+                                                {...register("geographicaldistribution")}
+                                                placeholder="Enter Geographical Distribution"
+                                            />
+                                        </div>
 
-                                    <div>
-                                        <Label htmlFor="qrcode">QR Code</Label>
-                                        <Input
-                                            id="qrcode"
-                                            {...register("qrcode")}
-                                            placeholder="Enter QR Code URL"
-                                        />
-                                    </div>
+                                        <div>
+                                            <Label htmlFor="iucnstatus">IUCN Status</Label>
+                                            <Input
+                                                id="iucnstatus"
+                                                {...register("iucnstatus")}
+                                                placeholder="Enter IUCN Status"
+                                            />
+                                        </div>
 
-                                    <div>
-                                        <Label htmlFor="link">Link</Label>
-                                        <Input
-                                            id="link"
-                                            {...register("link")}
-                                            placeholder="Enter Link"
-                                        />
-                                    </div>
+                                        <div>
+                                            <Label htmlFor="totalnddbcampus">Total NDDB Campus</Label>
+                                            <Input
+                                                type="number"
+                                                id="totalnddbcampus"
+                                                {...register("totalnddbcampus", {
+                                                    valueAsNumber: true,
+                                                    min: 0
+                                                })}
+                                                placeholder="Enter Total NDDB Campus"
+                                            />
+                                        </div>
 
-                                    <div>
-                                        <Label htmlFor="botanyid">Botany</Label>
-                                        <select
-                                            id="botanyid"
-                                            {...register("botanyid", {
-                                                required: true,
-                                                valueAsNumber: true
-                                            })}
-                                            className="w-full p-2 border rounded"
-                                        >
-                                            {botanies.map(botany => (
-                                                <option key={botany.id} value={botany.id}>
-                                                    {botany.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        {errors.botanyid && <p className="text-sm text-red-500">Botany is required</p>}
-                                    </div>
+                                        <div>
+                                            <Label htmlFor="qrcode">QR Code</Label>
+                                            <Input
+                                                id="qrcode"
+                                                {...register("qrcode")}
+                                                placeholder="Enter QR Code URL"
+                                            />
+                                        </div>
 
-                                    <div>
-                                        <Label htmlFor="campusid">Campus</Label>
-                                        <select
-                                            id="campusid"
-                                            {...register("campusid", {
-                                                valueAsNumber: true
-                                            })}
-                                            className="w-full p-2 border rounded"
-                                        >
-                                            <option value={0}>None</option>
-                                            {campuses.map(campus => (
-                                                <option key={campus.id} value={campus.id}>
-                                                    {campus.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                        <div>
+                                            <Label htmlFor="link">Link</Label>
+                                            <Input
+                                                id="link"
+                                                {...register("link")}
+                                                placeholder="Enter Link"
+                                            />
+                                        </div>
 
-                                    <div className="flex items-center space-x-2">
-                                        <Label htmlFor="isactive">Active Status</Label>
-                                        <Switch
-                                            id="isactive"
-                                            {...register("isactive")}
-                                        />
+                                        <div>
+                                            <Label htmlFor="botanyid">Botany</Label>
+                                            <select
+                                                id="botanyid"
+                                                {...register("botanyid", {
+                                                    required: true,
+                                                    valueAsNumber: true
+                                                })}
+                                                className="w-full p-2 border rounded"
+                                            >
+                                                {botanies.map(botany => (
+                                                    <option key={botany.id} value={botany.id}>
+                                                        {botany.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {errors.botanyid && <p className="text-sm text-red-500">Botany is required</p>}
+                                        </div>
+
+                                        <div>
+                                            <Label htmlFor="campusid">Campus</Label>
+                                            <select
+                                                id="campusid"
+                                                {...register("campusid", {
+                                                    valueAsNumber: true
+                                                })}
+                                                className="w-full p-2 border rounded"
+                                            >
+                                                <option value={0}>None</option>
+                                                {campuses.map(campus => (
+                                                    <option key={campus.id} value={campus.id}>
+                                                        {campus.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="flex items-center space-x-2">
+                                            <Label htmlFor="isactive">Active Status</Label>
+                                            <Switch
+                                                id="isactive"
+                                                {...register("isactive")}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
+                                <DrawerFooter>
+                                    <Button type="submit" className='cursor-pointer'>{editingSpecies ? 'Update Species' : 'Add Species'}</Button>
+                                    <DrawerClose >
+                                        <Button variant="outline" type="button" className='cursor-pointer w-full'>Cancel</Button>
+                                    </DrawerClose>
+                                </DrawerFooter>
+                            </form>
+                        </DrawerContent>
+                    </Drawer>
+
+                    {/* View Species Details Drawer */}
+                    <Drawer open={isViewDrawerOpen} onOpenChange={setIsViewDrawerOpen}>
+                        <DrawerContent >
+                            <DrawerHeader>
+                                <DrawerTitle>Species Details</DrawerTitle>
+                                <DrawerDescription>Viewing detailed information for this species.</DrawerDescription>
+                            </DrawerHeader>
+                            {viewingSpecies && (
+                                <div className="p-2 space-y-2">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <h3 className="font-bold">Tree Name</h3>
+                                            <p>{viewingSpecies.treename}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">Scientific Name</h3>
+                                            <p>{viewingSpecies.scientificname}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">Hindi Name</h3>
+                                            <p>{viewingSpecies.hindiname || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">Centre of Origin</h3>
+                                            <p>{viewingSpecies.centreoforigin || 'N/A'}</p>
+                                        </div>
+                                        <div className="md:col-span-2">
+                                            <h3 className="font-bold">Geographical Distribution</h3>
+                                            <p>{viewingSpecies.geographicaldistribution || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">IUCN Status</h3>
+                                            <p>{viewingSpecies.iucnstatus || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">Total NDDB Campus</h3>
+                                            <p>{viewingSpecies.totalnddbcampus}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">QR Code</h3>
+                                            <p>{viewingSpecies.qrcode || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">Link</h3>
+                                            <p>{viewingSpecies.link || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">Botany</h3>
+                                            <p>{viewingSpecies.botany_name}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">Campus</h3>
+                                            <p>{viewingSpecies.campus_name || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold">Status</h3>
+                                            <p>{viewingSpecies.isactive ? 'Active' : 'Inactive'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             <DrawerFooter>
-                                <Button type="submit" className='cursor-pointer'>{editingSpecies ? 'Update Species' : 'Add Species'}</Button>
-                                <DrawerClose >
-                                    <Button variant="outline" type="button" className='cursor-pointer w-full'>Cancel</Button>
+                                <DrawerClose asChild>
+                                    <Button variant="outline" type="button" className='cursor-pointer'>Close</Button>
                                 </DrawerClose>
                             </DrawerFooter>
-                        </form>
-                    </DrawerContent>
-                </Drawer>
-
-                {/* View Species Details Drawer */}
-                <Drawer open={isViewDrawerOpen} onOpenChange={setIsViewDrawerOpen}>
-                    <DrawerContent >
-                        <DrawerHeader>
-                            <DrawerTitle>Species Details</DrawerTitle>
-                            <DrawerDescription>Viewing detailed information for this species.</DrawerDescription>
-                        </DrawerHeader>
-                        {viewingSpecies && (
-                            <div className="p-2 space-y-2">
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <h3 className="font-bold">Tree Name</h3>
-                                        <p>{viewingSpecies.treename}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">Scientific Name</h3>
-                                        <p>{viewingSpecies.scientificname}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">Hindi Name</h3>
-                                        <p>{viewingSpecies.hindiname || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">Centre of Origin</h3>
-                                        <p>{viewingSpecies.centreoforigin || 'N/A'}</p>
-                                    </div>
-                                    <div className="md:col-span-2">
-                                        <h3 className="font-bold">Geographical Distribution</h3>
-                                        <p>{viewingSpecies.geographicaldistribution || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">IUCN Status</h3>
-                                        <p>{viewingSpecies.iucnstatus || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">Total NDDB Campus</h3>
-                                        <p>{viewingSpecies.totalnddbcampus}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">QR Code</h3>
-                                        <p>{viewingSpecies.qrcode || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">Link</h3>
-                                        <p>{viewingSpecies.link || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">Botany</h3>
-                                        <p>{viewingSpecies.botany_name}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">Campus</h3>
-                                        <p>{viewingSpecies.campus_name || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold">Status</h3>
-                                        <p>{viewingSpecies.isactive ? 'Active' : 'Inactive'}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        <DrawerFooter>
-                            <DrawerClose asChild>
-                                <Button variant="outline" type="button" className='cursor-pointer'>Close</Button>
-                            </DrawerClose>
-                        </DrawerFooter>
-                    </DrawerContent>
-                </Drawer>
+                        </DrawerContent>
+                    </Drawer>
+                </div>
             </div>
 
             <Table>
@@ -445,7 +469,7 @@ const Species = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {species.map((spec, index) => (
+                    {filteredSpecies.map((spec, index) => (
                         <TableRow key={spec.id}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{spec.treename}</TableCell>

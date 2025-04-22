@@ -24,7 +24,7 @@ import { toast } from 'sonner';
 interface Species {
     id: string;
     name: string;
-    treename: string; // Added to match with API response
+    treename: string;
 }
 
 interface SpeciesUsage {
@@ -52,6 +52,7 @@ const SpeciesUsage = () => {
     const [editingSpeciesUsage, setEditingSpeciesUsage] = useState<SpeciesUsage | null>(null);
     const [viewingSpeciesUsage, setViewingSpeciesUsage] = useState<SpeciesUsage | null>(null);
     const [selectedSpeciesId, setSelectedSpeciesId] = useState<string>('');
+    const [searchTerm, setSearchTerm] = useState<string>('');
 
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<SpeciesUsageFormData>();
 
@@ -88,7 +89,6 @@ const SpeciesUsage = () => {
 
     const handleSave = useCallback(async (data: SpeciesUsageFormData) => {
         try {
-            // Use the selected species ID from the dropdown
             const finalData = {
                 ...data,
                 speciesId: Number(selectedSpeciesId)
@@ -134,75 +134,95 @@ const SpeciesUsage = () => {
         }
     }, [fetchSpeciesUsages]);
 
+    const filteredSpeciesUsages = speciesUsages.filter((item) => {
+        const speciesName = species.find(s => s.id === item.speciesid)?.treename || '';
+        return (
+            item.usagetitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            speciesName.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    });
+
     if (loading) {
         return <div>Loading species usages...</div>;
     }
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">Species Usage Management</h2>
-                <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                    <DrawerTrigger asChild>
-                        <Button className="cursor-pointer" onClick={() => {
-                            setEditingSpeciesUsage(null);
-                            setSelectedSpeciesId('');
-                            reset();
-                        }}>Add New Species Usage</Button>
-                    </DrawerTrigger>
-                    <DrawerContent>
-                        <form onSubmit={handleSubmit(handleSave)}>
-                            <DrawerHeader>
-                                <DrawerTitle>{editingSpeciesUsage ? 'Edit Species Usage' : 'Add New Species Usage'}</DrawerTitle>
-                                <DrawerDescription>{editingSpeciesUsage ? 'Update species usage details.' : 'Enter species usage details.'}</DrawerDescription>
-                            </DrawerHeader>
-                            <div className="p-4 space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="speciesId">Species</Label>
-                                    <Select value={selectedSpeciesId} onValueChange={handleSpeciesChange}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select a species" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {species.map((s) => (
-                                                <SelectItem key={s.id} value={s.id.toString()}>
-                                                    {` ${s.id} : ${s.treename}`}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
+                <div className="flex ">
+                    <Input
+                        type="text"
+                        className="w-full mr-2 w-64"
+                        placeholder="Search by species or title..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                        <DrawerTrigger asChild>
+                            <Button className="cursor-pointer" onClick={() => {
+                                setEditingSpeciesUsage(null);
+                                setSelectedSpeciesId('');
+                                reset();
+                            }}>Add New Species Usage</Button>
+                        </DrawerTrigger>
+                        <DrawerContent>
+                            <form onSubmit={handleSubmit(handleSave)}>
+                                <DrawerHeader>
+                                    <DrawerTitle>{editingSpeciesUsage ? 'Edit Species Usage' : 'Add New Species Usage'}</DrawerTitle>
+                                    <DrawerDescription>{editingSpeciesUsage ? 'Update species usage details.' : 'Enter species usage details.'}</DrawerDescription>
+                                </DrawerHeader>
+                                <div className="p-4 space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="speciesId">Species</Label>
+                                        <Select value={selectedSpeciesId} onValueChange={handleSpeciesChange}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a species" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {species.map((s) => (
+                                                    <SelectItem key={s.id} value={s.id.toString()}>
+                                                        {`${s.id} : ${s.treename}`}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="UsageTitle">Usage Title</Label>
+                                        <Input
+                                            id="UsageTitle"
+                                            {...register("UsageTitle", { required: "Usage title is required" })}
+                                            placeholder="Enter usage title"
+                                        />
+                                        {errors.UsageTitle && <p className="text-sm text-red-500">{errors.UsageTitle.message}</p>}
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="UsageDescription">Usage Description</Label>
+                                        <Textarea
+                                            id="UsageDescription"
+                                            {...register("UsageDescription")}
+                                            placeholder="Enter usage description"
+                                            rows={5}
+                                        />
+                                    </div>
                                 </div>
-                                <div>
-                                    <Label htmlFor="UsageTitle">Usage Title</Label>
-                                    <Input
-                                        id="UsageTitle"
-                                        {...register("UsageTitle", { required: "Usage title is required" })}
-                                        placeholder="Enter usage title"
-                                    />
-                                    {errors.UsageTitle && <p className="text-sm text-red-500">{errors.UsageTitle.message}</p>}
-                                </div>
-                                <div>
-                                    <Label htmlFor="UsageDescription">Usage Description</Label>
-                                    <Textarea
-                                        id="UsageDescription"
-                                        {...register("UsageDescription")}
-                                        placeholder="Enter usage description"
-                                        rows={5}
-                                    />
-                                </div>
-                            </div>
-                            <DrawerFooter>
-                                <Button type="submit" disabled={!selectedSpeciesId}>
-                                    {editingSpeciesUsage ? 'Update Usage' : 'Add Usage'}
-                                </Button>
-                                <DrawerClose asChild>
-                                    <Button variant="outline" type="button">Cancel</Button>
-                                </DrawerClose>
-                            </DrawerFooter>
-                        </form>
-                    </DrawerContent>
-                </Drawer>
+                                <DrawerFooter>
+                                    <Button type="submit" disabled={!selectedSpeciesId}>
+                                        {editingSpeciesUsage ? 'Update Usage' : 'Add Usage'}
+                                    </Button>
+                                    <DrawerClose asChild>
+                                        <Button variant="outline" type="button">Cancel</Button>
+                                    </DrawerClose>
+                                </DrawerFooter>
+                            </form>
+                        </DrawerContent>
+                    </Drawer>
+                </div>
+
+                {/* 🔍 Search Input */}
+
             </div>
 
             {/* View Drawer */}
@@ -249,33 +269,21 @@ const SpeciesUsage = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {speciesUsages.map((item, index) => (
+                    {filteredSpeciesUsages.map((item, index) => (
                         <TableRow key={item.id}>
                             <TableCell>{index + 1}</TableCell>
-                            <TableCell>
-                                {species.find(s => s.id === item.speciesid)?.treename || item.speciesid}
-                            </TableCell>
+                            <TableCell>{species.find(s => s.id === item.speciesid)?.treename || item.speciesid}</TableCell>
                             <TableCell className="font-medium">{item.usagetitle}</TableCell>
                             <TableCell>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                        setViewingSpeciesUsage(item);
-                                        setIsViewDrawerOpen(true);
-                                    }}
-                                >
+                                <Button variant="outline" size="sm" onClick={() => {
+                                    setViewingSpeciesUsage(item);
+                                    setIsViewDrawerOpen(true);
+                                }}>
                                     <Eye className="h-4 w-4" />
                                 </Button>
                             </TableCell>
                             <TableCell>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="cursor-pointer"
-                                    onClick={() => handleEdit(item)}
-                                >
+                                <Button variant="outline" size="sm" onClick={() => handleEdit(item)}>
                                     <Pencil className="h-4 w-4" />
                                 </Button>
                             </TableCell>
@@ -283,7 +291,7 @@ const SpeciesUsage = () => {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="cursor-pointer text-red-500 hover:text-red-700"
+                                    className="text-red-500 hover:text-red-700"
                                     onClick={() => handleDelete(item.id)}
                                 >
                                     <X className="h-4 w-4" />

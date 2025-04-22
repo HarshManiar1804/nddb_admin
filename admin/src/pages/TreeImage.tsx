@@ -28,9 +28,8 @@ interface TreeImage {
     treename: string;
 }
 
-// Updated interface to match what comes from the API endpoint
 interface Species {
-    id: number;           // Using id instead of speciesId to match API response
+    id: number;
     treename: string;
     scientificname?: string;
 }
@@ -46,6 +45,7 @@ const TreeImage = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [editingImage, setEditingImage] = useState<TreeImage | null>(null);
     const [selectedSpeciesId, setSelectedSpeciesId] = useState<number | ''>('');
+    const [searchTerm, setSearchTerm] = useState('');
 
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<TreeImageFormData>();
 
@@ -77,7 +77,6 @@ const TreeImage = () => {
     }, []);
 
     const createOrUpdateTreeImage = useCallback(async (imageData: TreeImageFormData) => {
-        // Ensure the speciesid is set from the dropdown selection
         const finalData = {
             ...imageData,
             speciesId: Number(selectedSpeciesId)
@@ -129,68 +128,83 @@ const TreeImage = () => {
         setSelectedSpeciesId(Number(value));
     };
 
+    const filteredImages = treeImages.filter((img) =>
+        img.treename.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (img.imagetype?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+    );
+
     if (loading) {
         return <div>Loading tree images...</div>;
     }
 
     return (
-        <div className="space-y-3">
-            <div className="flex items-center justify-between">
+        <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
                 <h2 className="text-2xl font-bold">Tree Images Management</h2>
-                <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                    <DrawerTrigger asChild>
-                        <Button onClick={() => {
-                            setEditingImage(null);
-                            setSelectedSpeciesId('');
-                            reset();
-                        }}>Add New Tree Image</Button>
-                    </DrawerTrigger>
-                    <DrawerContent className="overflow-y-auto">
-                        <form onSubmit={handleSubmit(createOrUpdateTreeImage)}>
-                            <DrawerHeader>
-                                <DrawerTitle>{editingImage ? 'Edit Tree Image' : 'Add New Tree Image'}</DrawerTitle>
-                                <DrawerDescription>Enter tree image details.</DrawerDescription>
-                            </DrawerHeader>
-                            <div className="p-4 space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="speciesid">Species</Label>
-                                    <Select value={selectedSpeciesId.toString()} onValueChange={handleSpeciesChange}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select a species" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {species.map((s) => (
-                                                <SelectItem key={s.id} value={s.id.toString()}>
-                                                    {` ${s.id} : ${s.treename}`}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
-                                </div>
+                <div className="flex items-center gap-4 w-full sm:w-auto">
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="imagetype">Image Type</Label>
-                                    <Input id="imagetype" {...register("imagetype")} placeholder="Enter Image Type" />
-                                </div>
+                    <Input
+                        type="text"
+                        placeholder="Search by species or image type..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-64 mr-2"
+                    />
+                    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                        <DrawerTrigger asChild>
+                            <Button onClick={() => {
+                                setEditingImage(null);
+                                setSelectedSpeciesId('');
+                                reset();
+                            }}>Add New Tree Image</Button>
+                        </DrawerTrigger>
+                        <DrawerContent className="overflow-y-auto">
+                            <form onSubmit={handleSubmit(createOrUpdateTreeImage)}>
+                                <DrawerHeader>
+                                    <DrawerTitle>{editingImage ? 'Edit Tree Image' : 'Add New Tree Image'}</DrawerTitle>
+                                    <DrawerDescription>Enter tree image details.</DrawerDescription>
+                                </DrawerHeader>
+                                <div className="p-4 space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="speciesid">Species</Label>
+                                        <Select value={selectedSpeciesId.toString()} onValueChange={handleSpeciesChange}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a species" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {species.map((s) => (
+                                                    <SelectItem key={s.id} value={s.id.toString()}>
+                                                        {` ${s.id} : ${s.treename}`}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="imageurl">Image URL</Label>
-                                    <Input id="imageurl" {...register("imageurl", { required: true })} placeholder="Enter Image URL" />
-                                    {errors.imageurl && <p className="text-sm text-red-500">Image URL is required</p>}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="imagetype">Image Type</Label>
+                                        <Input id="imagetype" {...register("imagetype")} placeholder="Enter Image Type" />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="imageurl">Image URL</Label>
+                                        <Input id="imageurl" {...register("imageurl", { required: true })} placeholder="Enter Image URL" />
+                                        {errors.imageurl && <p className="text-sm text-red-500">Image URL is required</p>}
+                                    </div>
                                 </div>
-                            </div>
-                            <DrawerFooter>
-                                <Button type="submit" disabled={!selectedSpeciesId}>
-                                    {editingImage ? 'Update Image' : 'Add Image'}
-                                </Button>
-                                <DrawerClose asChild>
-                                    <Button variant="outline" type="button">Cancel</Button>
-                                </DrawerClose>
-                            </DrawerFooter>
-                        </form>
-                    </DrawerContent>
-                </Drawer>
+                                <DrawerFooter>
+                                    <Button type="submit" disabled={!selectedSpeciesId}>
+                                        {editingImage ? 'Update Image' : 'Add Image'}
+                                    </Button>
+                                    <DrawerClose asChild>
+                                        <Button variant="outline" type="button">Cancel</Button>
+                                    </DrawerClose>
+                                </DrawerFooter>
+                            </form>
+                        </DrawerContent>
+                    </Drawer>
+                </div>
             </div>
             <Table>
                 <TableCaption>List of Tree Images</TableCaption>
@@ -206,7 +220,7 @@ const TreeImage = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {treeImages.map((img, index) => (
+                    {filteredImages.map((img, index) => (
                         <TableRow key={img.id}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{img.treename}</TableCell>

@@ -27,12 +27,14 @@ interface TreeGeolocation {
     latitude: string;
     Scientificname: string;
     treename: string;
+    hindiname?: string;
 }
 
 interface Species {
     id: number;
     treename: string;
     scientificname?: string;
+    hindiname?: string;
 }
 
 interface TreeGeolocationFormData {
@@ -52,6 +54,7 @@ const TreeLocation = () => {
     const [editGeolocation, setEditGeolocation] = useState<TreeGeolocation | null>(null);
     const [viewGeolocation, setViewGeolocation] = useState<TreeGeolocation | null>(null);
     const [selectedSpeciesId, setSelectedSpeciesId] = useState<string>('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<TreeGeolocationFormData>();
 
@@ -87,7 +90,6 @@ const TreeLocation = () => {
     };
 
     const handleSave = useCallback(async (formData: TreeGeolocationFormData) => {
-        // Override speciesid with selectedSpeciesId from dropdown
         const data = {
             ...formData,
             speciesId: Number(selectedSpeciesId)
@@ -124,7 +126,6 @@ const TreeLocation = () => {
         }
     }, [fetchGeolocations]);
 
-    // Initialize form when editing
     const prepareForm = useCallback((geolocation: TreeGeolocation | null) => {
         if (geolocation) {
             setSelectedSpeciesId(geolocation.speciesid);
@@ -134,67 +135,85 @@ const TreeLocation = () => {
         }
     }, [reset]);
 
+    const filteredGeolocations = geolocations.filter((geo) => {
+        const query = searchQuery.toLowerCase().trim();
+        return (
+            geo.treename?.toLowerCase().includes(query) ||
+            geo.Scientificname?.toLowerCase().includes(query) ||
+            geo.hindiname?.toLowerCase().includes(query) ||
+            geo.latitude?.toLowerCase().includes(query) ||
+            geo.longitude?.toLowerCase().includes(query)
+        );
+    });
+
     if (loading) {
         return <div>Loading geolocations...</div>;
     }
 
     return (
-        <div className="space-y-3">
-            <div className="flex items-center justify-between">
+        <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h2 className="text-2xl font-bold">Tree Geolocation Management</h2>
-                <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                    <DrawerTrigger asChild>
-                        <Button onClick={() => {
-                            setEditGeolocation(null);
-                            prepareForm(null);
-                        }}>Add New Geolocation</Button>
-                    </DrawerTrigger>
-                    <DrawerContent>
-                        <form onSubmit={handleSubmit(handleSave)}>
-                            <DrawerHeader>
-                                <DrawerTitle>{editGeolocation ? 'Edit Geolocation' : 'Add New Geolocation'}</DrawerTitle>
-                                <DrawerDescription>{editGeolocation ? 'Update geolocation details.' : 'Enter geolocation details.'}</DrawerDescription>
-                            </DrawerHeader>
-                            <div className="p-4 space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="speciesId">Species</Label>
-                                    <Select value={selectedSpeciesId} onValueChange={handleSpeciesChange}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select a species" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {species.map((s) => (
-                                                <SelectItem key={s.id} value={s.id.toString()}>
-                                                    {`${s.id} : ${s.treename}`}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                    <Input
+                        placeholder="Search by tree name or coordinates"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full sm:w-64"
+                    />
+                    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                        <DrawerTrigger asChild>
+                            <Button onClick={() => {
+                                setEditGeolocation(null);
+                                prepareForm(null);
+                            }}>Add New Geolocation</Button>
+                        </DrawerTrigger>
+                        <DrawerContent>
+                            <form onSubmit={handleSubmit(handleSave)}>
+                                <DrawerHeader>
+                                    <DrawerTitle>{editGeolocation ? 'Edit Geolocation' : 'Add New Geolocation'}</DrawerTitle>
+                                    <DrawerDescription>{editGeolocation ? 'Update geolocation details.' : 'Enter geolocation details.'}</DrawerDescription>
+                                </DrawerHeader>
+                                <div className="p-4 space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="speciesId">Species</Label>
+                                        <Select value={selectedSpeciesId} onValueChange={handleSpeciesChange}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a species" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {species.map((s) => (
+                                                    <SelectItem key={s.id} value={s.id.toString()}>
+                                                        {`${s.id} : ${s.treename}`}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="longitude">Longitude</Label>
+                                        <Input id="longitude" {...register("longitude", { required: "Longitude is required" })} defaultValue={editGeolocation?.longitude} placeholder="Enter longitude" />
+                                        {errors.longitude && <p className="text-sm text-red-500">{errors.longitude.message}</p>}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="latitude">Latitude</Label>
+                                        <Input id="latitude" {...register("latitude", { required: "Latitude is required" })} defaultValue={editGeolocation?.latitude} placeholder="Enter latitude" />
+                                        {errors.latitude && <p className="text-sm text-red-500">{errors.latitude.message}</p>}
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="longitude">Longitude</Label>
-                                    <Input id="longitude" {...register("longitude", { required: "Longitude is required" })} defaultValue={editGeolocation?.longitude} placeholder="Enter longitude" />
-                                    {errors.longitude && <p className="text-sm text-red-500">{errors.longitude.message}</p>}
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="latitude">Latitude</Label>
-                                    <Input id="latitude" {...register("latitude", { required: "Latitude is required" })} defaultValue={editGeolocation?.latitude} placeholder="Enter latitude" />
-                                    {errors.latitude && <p className="text-sm text-red-500">{errors.latitude.message}</p>}
-                                </div>
-                            </div>
-                            <DrawerFooter>
-                                <Button type="submit" disabled={!selectedSpeciesId}>{editGeolocation ? 'Update Geolocation' : 'Add Geolocation'}</Button>
-                                <DrawerClose asChild>
-                                    <Button variant="outline" type="button">Cancel</Button>
-                                </DrawerClose>
-                            </DrawerFooter>
-                        </form>
-                    </DrawerContent>
-                </Drawer>
+                                <DrawerFooter>
+                                    <Button type="submit" disabled={!selectedSpeciesId}>{editGeolocation ? 'Update Geolocation' : 'Add Geolocation'}</Button>
+                                    <DrawerClose asChild>
+                                        <Button variant="outline" type="button">Cancel</Button>
+                                    </DrawerClose>
+                                </DrawerFooter>
+                            </form>
+                        </DrawerContent>
+                    </Drawer>
+                </div>
             </div>
 
-            {/* View Drawer */}
             <Drawer open={isViewDrawerOpen} onOpenChange={setIsViewDrawerOpen}>
                 <DrawerContent>
                     <DrawerHeader>
@@ -206,7 +225,6 @@ const TreeLocation = () => {
                             <Label>Species details</Label>
                             <p className="text-lg">ID : {viewGeolocation?.speciesid}<br /> Name : {viewGeolocation?.treename}</p>
                         </div>
-
                         <div>
                             <Label>Longitude</Label>
                             <p className="text-lg">{viewGeolocation?.longitude}</p>
@@ -238,7 +256,7 @@ const TreeLocation = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {geolocations.map((item, index) => (
+                    {filteredGeolocations.map((item, index) => (
                         <TableRow key={item.id}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{item.treename}</TableCell>
