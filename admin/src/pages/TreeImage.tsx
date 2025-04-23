@@ -34,9 +34,9 @@ interface Species {
     scientificname?: string;
 }
 
-interface TreeImageFormData extends Omit<TreeImage, 'speciesId' | 'treename'> { }
+// Removed redundant TreeImageFormData interface
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const TreeImage = () => {
     const [treeImages, setTreeImages] = useState<TreeImage[]>([]);
@@ -47,7 +47,7 @@ const TreeImage = () => {
     const [selectedSpeciesId, setSelectedSpeciesId] = useState<number | ''>('');
     const [searchTerm, setSearchTerm] = useState('');
 
-    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<TreeImageFormData>();
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<Omit<TreeImage, 'speciesId' | 'treename'>>();
 
     useEffect(() => {
         fetchTreeImages();
@@ -76,7 +76,7 @@ const TreeImage = () => {
         }
     }, []);
 
-    const createOrUpdateTreeImage = useCallback(async (imageData: TreeImageFormData) => {
+    const createOrUpdateTreeImage = useCallback(async (imageData: Omit<TreeImage, 'speciesId' | 'treename'>) => {
         const finalData = {
             ...imageData,
             speciesId: Number(selectedSpeciesId)

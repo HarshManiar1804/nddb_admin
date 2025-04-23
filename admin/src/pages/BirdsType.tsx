@@ -68,8 +68,8 @@ const BirdTypes = () => {
             setIsDrawerOpen(false);
             reset();
             fetchBirdTypes();
-        } catch (error: any) {
-            toast.error(error.response?.data?.error || 'Failed to save bird type');
+        } catch {
+            toast.error('Failed to save bird type');
         }
     }, [editingBirdType, fetchBirdTypes, reset]);
 
@@ -80,8 +80,8 @@ const BirdTypes = () => {
             await axios.delete(`${API_URL}/bird-types/${id}`);
             fetchBirdTypes();
             toast.success('Bird type deleted successfully');
-        } catch (error: any) {
-            toast.error(error.response?.data?.error || 'Failed to delete bird type');
+        } catch {
+            toast.error('Failed to delete bird type');
         }
     }, [fetchBirdTypes]);
 

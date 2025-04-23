@@ -65,7 +65,7 @@ const Campus = () => {
             setIsDrawerOpen(false);
             reset();
             fetchCampuses();
-        } catch (error) {
+        } catch {
             toast.error('Failed to save campus');
         }
     }, [editingCampus, fetchCampuses, reset]);
@@ -77,7 +77,7 @@ const Campus = () => {
             await axios.delete(`${API_URL}/campus/${id}`);
             fetchCampuses();
             toast.success('Campus deleted successfully');
-        } catch (error) {
+        } catch {
             toast.error('Failed to delete campus');
         }
     }, [fetchCampuses]);

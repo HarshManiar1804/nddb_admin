@@ -12,20 +12,18 @@ import {
 } from "@/components/ui/table";
 import {
     Drawer,
-    DrawerClose,
     DrawerContent,
     DrawerDescription,
     DrawerFooter,
     DrawerHeader,
     DrawerTitle,
-    DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { X, Pencil, Eye, Plus, Search, RefreshCw } from 'lucide-react';
+import { X, Pencil, Eye, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Bird {
@@ -262,28 +260,25 @@ const Birds = () => {
         setSearchTerm(e.target.value);
     };
 
-    // Handler to clear search
-    const handleClearSearch = () => {
-        setSearchTerm('');
-    };
-
     if (loading && birds.length === 0) {
         return <div className="p-6 text-center text-lg">Loading birds data...</div>;
     }
 
     return (
         <div className="w-full max-w-7xl mx-auto p-2">
-            <div className="flex flex-col md:flex-row  justify-between mb-6 gap-2">
+            <div className="flex justify-between">
                 <h2 className="text-2xl font-bold">Birds Management</h2>
-                <Input
-                    placeholder="Search birds by name, scientific name, type or status..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    className="w-64 items-end justify-end"
-                />
-                <Button className="w-full md:w-auto" onClick={handleAddNewBird}>
-                    <Plus className="h-4 w-4 mr-2" /> Add New Bird
-                </Button>
+                <div className="flex flex-col md:flex-row items-center justify-end mb-6 gap-2">
+                    <Input
+                        placeholder="Search birds by name, scientific name, type or status..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="w-72 items-end justify-end"
+                    />
+                    <Button className="w-full md:w-auto" onClick={handleAddNewBird}>
+                        <Plus className="h-4 w-4 mr-2" /> Add New Bird
+                    </Button>
+                </div>
             </div>
 
             {/* Bird Form Drawer */}

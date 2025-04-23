@@ -1,4 +1,5 @@
-import { MapType } from "@/utils/utils";
+
+import { MapType } from "@/App";
 import { MapPlus } from "lucide-react";
 import React from "react";
 
@@ -24,7 +25,7 @@ const MapSelection: React.FC<MapSelectionProps> = ({ mapType, setMapType }) => {
                             name="mapType"
                             value={option}
                             checked={mapType === option as unknown as MapType}
-                            onChange={() => setMapType(option)}
+                            onChange={() => setMapType(option as unknown as MapType)}
                             className="cursor-pointer"
                         />
                         <span className="capitalize">{option}</span>

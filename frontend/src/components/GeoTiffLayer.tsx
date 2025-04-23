@@ -7,9 +7,10 @@ import { useMap } from "react-leaflet";
 const GeoTIFFLayer: React.FC<{ setTiffLoading: (loading: boolean) => void }> = ({ setTiffLoading }) => {
     const map = useMap();
     const layerRef = useRef<L.TileLayer.WMS | null>(null);
+    const GEOSERVER_URL = import.meta.env.VITE_GEOSERVER_URL;
 
     // Your GeoServer WMS URL
-    const geoserverUrl = 'http://localhost:8080/geoserver/nddb/wms';
+    const geoserverUrl = `${GEOSERVER_URL}/nddb/wms`;
 
     useEffect(() => {
         // Set loading state to true before creating WMS layer

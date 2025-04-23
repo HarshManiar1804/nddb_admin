@@ -46,7 +46,7 @@ interface Species {
     campus_name: string;
 }
 
-interface SpeciesFormData extends Omit<Species, 'id' | 'botany_name' | 'campus_name'> { }
+// Removed redundant SpeciesFormData interface
 
 interface Botany {
     id: number;
@@ -58,7 +58,7 @@ interface Campus {
     name: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Species = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -70,7 +70,7 @@ const Species = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
     const [editingSpecies, setEditingSpecies] = useState<Species | null>(null);
-    const [viewingSpecies, setViewingSpecies] = useState<any | null>(null);
+    const [viewingSpecies, setViewingSpecies] = useState<Species | null>(null);
     const filteredSpecies = species.filter((spec) => {
         const query = searchQuery.toLowerCase().trim();
         return (
@@ -84,7 +84,7 @@ const Species = () => {
 
 
 
-    const { register, handleSubmit, reset, setValue, control, formState: { errors } } = useForm<SpeciesFormData>();
+    const { register, handleSubmit, reset, setValue, control, formState: { errors } } = useForm<Omit<Species, 'id' | 'botany_name' | 'campus_name'>>();
 
     useEffect(() => {
         fetchSpecies();
@@ -123,7 +123,7 @@ const Species = () => {
         }
     }, []);
 
-    const createOrUpdateSpecies = useCallback(async (speciesData: SpeciesFormData) => {
+    const createOrUpdateSpecies = useCallback(async (speciesData: Omit<Species, 'id' | 'botany_name' | 'campus_name'>) => {
         console.log(speciesData)
         try {
             if (editingSpecies) {

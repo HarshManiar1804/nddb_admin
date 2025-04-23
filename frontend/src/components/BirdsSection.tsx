@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import "leaflet/dist/leaflet.css";
 import { X, Loader } from "lucide-react";
 import { Button } from "./ui/button";
 import L from "leaflet";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { birdColors } from "@/utils/utils";
 import GeoTIFFLayer from "./GeoTiffLayer";
 
@@ -13,13 +13,11 @@ const mapOptions = [
     { name: "terrain", url: "https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}" },
 ];
 
-
-
 const BirdsSection = ({ mapType = "satellite" }) => {
-    const BACKEND_URL = "http://localhost:5001/api";
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const selectedMap = mapOptions.find((option) => option.name === mapType) || mapOptions[0];
     const [tiffLoading, setTiffLoading] = useState(true); // New state for GeoTIFF loading
-    const [birds, setBirds] = useState([]);
+    const [birds, setBirds] = useState<Bird[]>([]);
     interface Bird {
         id: number;
         birdname: string;
@@ -41,8 +39,8 @@ const BirdsSection = ({ mapType = "satellite" }) => {
     const [loading, setLoading] = useState(false);
     const [markersLoading, setMarkersLoading] = useState(false);
     const [error, setError] = useState("");
-    const [markerIcons, setMarkerIcons] = useState({});
-    const [birdTypeMap, setBirdTypeMap] = useState(new Map());
+    const [markerIcons, setMarkerIcons] = useState<Record<number, L.Icon | L.DivIcon>>({});
+
     const [showMarkers, setShowMarkers] = useState(false);
     const cancelFetchRef = useRef(false);
     // Define the bird icon using the provided URL
@@ -54,7 +52,7 @@ const BirdsSection = ({ mapType = "satellite" }) => {
     }), []);
 
     // Create a colored bird icon with the specified color
-    const createColoredBirdIcon = (color) => {
+    const createColoredBirdIcon = (color: string) => {
         // Using the bird icon URL but with color parameter
         const iconUrl = `https://img.icons8.com/?size=100&id=zOoA9kbGQM3w&format=png&color=${color.replace('#', '')}`;
 
@@ -89,7 +87,7 @@ const BirdsSection = ({ mapType = "satellite" }) => {
         cancelFetchRef.current = true;
         setMarkersLoading(false);
         setMarkerIcons({});
-        setBirdTypeMap(new Map());
+
     };
 
     // Fetch birds data from API
@@ -127,19 +125,40 @@ const BirdsSection = ({ mapType = "satellite" }) => {
     }, [BACKEND_URL]);
 
     // Process marker icons for different bird types
-    const processMarkerIcons = (birdsData) => {
+    interface BirdData {
+        id: number;
+        birdname: string;
+        scientificname: string;
+        bird_type_name?: string;
+        birdimage?: string;
+        iucnstatus?: string;
+        migrationstatus?: string;
+        foodpreference?: string;
+        habitatpreference?: string;
+        globaldistribution?: string;
+        ecologicalrole?: string;
+        urllink?: string;
+        coordinates?: string;
+        birds_type?: string;
+    }
+
+    interface MarkerIcons {
+        [key: number]: L.Icon | L.DivIcon;
+    }
+
+    const processMarkerIcons = (birdsData: BirdData[]): void => {
         cancelFetchRef.current = false;
         setShowMarkers(false);
         setMarkerIcons({});
 
-        const typeMap = new Map();
-        const newIcons: { [key: number]: L.Icon | L.DivIcon } = {};
+        const typeMap: Map<number, number> = new Map();
+        const newIcons: MarkerIcons = {};
 
         birdsData.forEach((bird, index) => {
             if (cancelFetchRef.current) return;
 
             // Ensure birds_type is treated as a number
-            const birdType = parseInt(bird.birds_type) || 0;
+            const birdType = parseInt(bird.birds_type || "0");
             typeMap.set(birdType, birdType);
 
             const color = birdColors[index + 1];
@@ -148,13 +167,12 @@ const BirdsSection = ({ mapType = "satellite" }) => {
         });
 
         setMarkerIcons(newIcons);
-        setBirdTypeMap(typeMap);
         setMarkersLoading(false);
         setShowMarkers(true);
     };
 
-    const fetchBirdDetails = async (birdId: any) => {
-        setLoading(true);
+    const fetchBirdDetails = async (birdId: number) => {
+        setLoading(true)
         setError("");
         try {
             const response = await fetch(`${BACKEND_URL}/birds/${birdId}`);
@@ -189,23 +207,6 @@ const BirdsSection = ({ mapType = "satellite" }) => {
         return [parts[0], parts[1]];
     };
 
-    // Get bird type name based on bird_type_name
-    const getBirdTypeName = (bird) => {
-        if (bird.bird_type_name && bird.bird_type_name.trim() !== "") {
-            return bird.bird_type_name;
-        }
-
-        // If bird_type_name is missing but we have birds_type
-        switch (parseInt(bird.birds_type)) {
-            case 1: return "Fruit-Eating Birds";
-            case 2: return "Type 2 Birds";
-            case 3: return "Type 3 Birds";
-            case 4: return "Type 4 Birds";
-            case 5: return "Type 5 Birds";
-            case 6: return "Type 6 Birds";
-            default: return "Unknown";
-        }
-    };
 
     return (
         <div className="h-full w-full relative rounded-lg">
@@ -226,7 +227,7 @@ const BirdsSection = ({ mapType = "satellite" }) => {
 
                 {/* Show markers only after all have been processed */}
                 {showMarkers && birds.map((bird, index) => {
-                    const position = parseCoordinates(bird.coordinates);
+                    const position = parseCoordinates(bird.coordinates || "");
 
                     // Skip birds with invalid coordinates
                     if (!position) return null;
@@ -234,7 +235,7 @@ const BirdsSection = ({ mapType = "satellite" }) => {
                     return (
                         <Marker
                             key={index}
-                            position={position}
+                            position={position as L.LatLngTuple}
                             icon={markerIcons[index] || defaultIcon}
                             eventHandlers={{
                                 click: () => fetchBirdDetails(bird.id),
@@ -263,7 +264,7 @@ const BirdsSection = ({ mapType = "satellite" }) => {
 
             {/* Loading Overlay */}
             {markersLoading && (
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center rounded-lg z-10">
+                <div className="absolute inset-0  bg-opacity-50 flex flex-col items-center justify-center rounded-lg z-10">
                     <div className="bg-white p-6 rounded-lg shadow-lg text-center">
                         <Loader className="h-12 w-12 mx-auto text-blue-500 animate-spin mb-4" />
                         <p className="text-lg font-medium text-gray-800">Loading Bird Markers...</p>

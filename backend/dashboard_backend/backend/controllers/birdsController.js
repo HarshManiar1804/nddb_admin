@@ -4,7 +4,7 @@ const db = require("../config/db");
 // Get all birds (simplified to focus on Birds table)
 const getAllBirds = async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM Birds");
+    const result = await db.query("SELECT * FROM Birds where isactive = true");
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error fetching birds:", error);

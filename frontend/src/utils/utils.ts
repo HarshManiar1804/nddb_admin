@@ -20,10 +20,6 @@ export const mapOptions = [
   },
 ];
 
-export interface MapType {
-  mapType: "satellite" | "hybrid" | "terrain";
-}
-
 // 🎨 Array of 180 campus-themed colors
 export const campusColors = [
   "#87ceeb",

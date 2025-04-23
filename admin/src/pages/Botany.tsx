@@ -65,7 +65,7 @@ const Botany = () => {
             setIsDrawerOpen(false);
             reset();
             fetchBotanies();
-        } catch (error) {
+        } catch {
             toast.error('Failed to save botany');
         }
     }, [editingBotany, fetchBotanies, reset]);
@@ -77,7 +77,7 @@ const Botany = () => {
             await axios.delete(`${API_URL}/botany/${id}`);
             fetchBotanies();
             toast.success('Botany deleted successfully');
-        } catch (error) {
+        } catch {
             toast.error('Failed to delete botany');
         }
     }, [fetchBotanies]);

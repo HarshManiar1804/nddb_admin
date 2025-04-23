@@ -36,8 +36,9 @@ interface TreeDataContextType {
     selectedSpecies: string[];
     setSelectedSpecies: React.Dispatch<React.SetStateAction<string[]>>;
     treeCoordinates: TreeCoordinates[];
-    birdsData: BirdData[]; // New birds data
+    birdsData: BirdData[];
     loading: boolean;
+    error: string | null;
     dashboardType: "Trees" | "Birds";
     setDashboardType: React.Dispatch<React.SetStateAction<"Trees" | "Birds">>;
 }
@@ -50,72 +51,96 @@ export const TreeDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const [speciesList, setSpeciesList] = useState<Species[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
     const [treeCoordinates, setTreeCoordinates] = useState<TreeCoordinates[]>([]);
-    const [birdsData, setBirdsData] = useState<BirdData[]>([]); // New birds data state
+    const [birdsData, setBirdsData] = useState<BirdData[]>([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [dashboardType, setDashboardType] = useState<"Trees" | "Birds">("Trees");
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    // Reset selections and fetch initial data when dashboard type changes
     useEffect(() => {
+        setLoading(true);
+        setError(null);
+
+        // Reset selections when dashboard type changes
+        setSelectedBotany([]);
+        setSelectedSpecies([]);
+
+        // Fetch botany list
+        axios.get(`${backendUrl}/botany`)
+            .then((response) => setBotanyList(response.data))
+            .catch((error) => {
+                console.error(`Error fetching botany data:`, error);
+                setError(`Failed to fetch botany data: ${error.message}`);
+            })
+            .finally(() => setLoading(false));
+
+        // Only fetch birds data when dashboardType is "Birds"
         if (dashboardType === "Birds") {
             setLoading(true);
-            axios.get('http://localhost:5001/api/birds')
+            axios.get(`${backendUrl}/birds`)
                 .then((response) => {
                     setBirdsData(response.data);
                 })
                 .catch((error) => {
                     console.error("Error fetching birds data:", error);
+                    setError(`Failed to fetch birds data: ${error.message}`);
                 })
-                .finally(() => {
-                    setLoading(false);
-                });
+                .finally(() => setLoading(false));
         }
-    }, [dashboardType]);
-
-    // Fetch botany list on mount or when dashboard type changes
-    useEffect(() => {
-        const endpoint = "/botany";
-
-        setSelectedBotany([]);
-        setSelectedSpecies([]);
-
-        axios.get(`${backendUrl}${endpoint}`)
-            .then((response) => setBotanyList(response.data))
-            .catch((error) => console.error(`Error fetching ${dashboardType.toLowerCase()} data:`, error));
     }, [backendUrl, dashboardType]);
 
     // Fetch species when selectedBotany changes
     useEffect(() => {
         if (selectedBotany.length === 0) {
-            setSpeciesList([]); // Clear species list if no botany is selected
+            setSpeciesList([]);
             return;
         }
 
-        setLoading(true);
+        if (dashboardType === "Trees") {
+            setLoading(true);
+            setError(null);
 
-        const endpoint = dashboardType === "Trees" ? "/species" : "/bird-species";
-
-        axios.post(`${backendUrl}${endpoint}`, { botanyIds: selectedBotany.map(Number) })
-            .then((response) => setSpeciesList(response.data))
-            .catch((error) => console.error(`Error fetching ${dashboardType.toLowerCase()} species data:`, error))
-            .finally(() => setLoading(false));
+            axios.post(`${backendUrl}/species`, { botanyIds: selectedBotany.map(Number) })
+                .then((response) => setSpeciesList(response.data))
+                .catch((error) => {
+                    console.error(`Error fetching tree species data:`, error);
+                    setError(`Failed to fetch tree species data: ${error.message}`);
+                })
+                .finally(() => setLoading(false));
+        }
+        // Not making any API call for bird species since the endpoint doesn't exist
     }, [selectedBotany, backendUrl, dashboardType]);
 
-    // Fetch coordinates when selectedSpecies changes
+    // Fetch coordinates/data when selectedSpecies changes
     useEffect(() => {
         if (selectedSpecies.length === 0) {
-            setTreeCoordinates([]); // Clear coordinates if no species is selected
+            if (dashboardType === "Trees") {
+                setTreeCoordinates([]);
+            }
             return;
         }
 
-        setLoading(true);
+        if (dashboardType === "Trees") {
+            setLoading(true);
+            setError(null);
 
-        const endpoint = dashboardType === "Trees" ? "/geolocation" : "/bird-geolocation";
 
-        axios.post(`${backendUrl}${endpoint}`, { speciesIDs: selectedSpecies.map(Number) })
-            .then((response) => setTreeCoordinates(response.data))
-            .catch((error) => console.error(`Error fetching ${dashboardType.toLowerCase()} geolocation data:`, error))
-            .finally(() => setLoading(false));
+            axios.post(`${backendUrl}/geolocation`, { speciesIDs: selectedSpecies.map(Number) })
+                .then((response) => {
+                    setTreeCoordinates(response.data);
+                })
+                .catch((error) => {
+                    console.error(`Error fetching tree location data:`, error);
+                    setError(`Failed to fetch tree location data: ${error.message}`);
+                })
+                .finally(() => setLoading(false));
+
+        }
+        // No /bird-geolocation endpoint to call
     }, [selectedSpecies, backendUrl, dashboardType]);
+
     return (
         <TreeDataContext.Provider
             value={{
@@ -126,8 +151,9 @@ export const TreeDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 selectedSpecies,
                 setSelectedSpecies,
                 treeCoordinates,
-                birdsData, // Expose birds data
+                birdsData,
                 loading,
+                error,
                 dashboardType,
                 setDashboardType
             }}

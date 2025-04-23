@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
@@ -31,7 +32,8 @@ const Layout = () => {
 };
 
 // Protected route component
-const ProtectedRoute = ({ children }) => {
+
+const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = localStorage.getItem("adminToken") !== null;
 
   if (!isAuthenticated) {
@@ -59,6 +61,13 @@ function App() {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
+    const tempfun = () => {
+      const token = isAuthenticated;
+      if (token) {
+        setIsAuthenticated(token !== null);
+      }
+    }
+    tempfun();
   }, []);
 
   return (

@@ -1,18 +1,19 @@
 import React, { useState } from "react";
+
+// Define the MapType type
+export type MapType = "satellite" | "terrain" | "hybrid";
 import TitleBranding from "./components/TitleBranding";
 import TreeDataViewer from "./components/TreeDataViewer";
 import ProjectInformation from "./components/ProjectInformation";
 import MapSection from "./components/MapSection";
 import Footer from "./components/Footer";
 import MapSelection from "./components/MapSelection";
-import type { MapType } from "./utils/utils";
 import { useTreeData } from "@/contexts/TreeDataContext";
 import BirdsSection from "./components/BirdsSection";
 
 const App: React.FC = () => {
   const [mapType, setMapType] = useState<MapType>("satellite");
   const { dashboardType } = useTreeData();
-
   const isBirdsDashboard = dashboardType === 'Birds';
 
   return (

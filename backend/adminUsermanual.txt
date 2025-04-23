@@ -1,0 +1,176 @@
+# NDDB Admin Panel User Manual
+
+## Table of Contents
+1. [Introduction](#introduction)
+2. [System Overview](#system-overview)
+3. [Features and Modules](#features-and-modules)
+4. [Detailed Module Guides](#detailed-module-guides)
+5. [Common Operations](#common-operations)
+6. [Troubleshooting](#troubleshooting)
+
+## Introduction
+Welcome to the NDDB (National Dairy Development Board) Admin Panel. This manual will guide you through the features and functionality of the admin interface.
+
+## System Overview
+The admin panel is designed to manage various aspects of the NDDB system, focusing on:
+- Species Management
+- Bird Management
+- Campus Management
+- Tree Location Management
+- Botany Management
+- Store Management
+
+## Features and Modules
+
+### 1. Species Management
+- Add, edit, and view tree species information
+- Manage species details including:
+  - Tree name
+  - Scientific name
+  - Hindi name
+  - Center of origin
+  - Geographical distribution
+  - IUCN status
+  - QR code 
+  - Active/Inactive status
+
+### 2. Bird Management
+- Comprehensive bird information management
+- Features include:
+  - Bird name and scientific name
+  - Bird type classification
+  - IUCN status
+  - Migration status
+  - Food preferences
+  - Habitat preferences
+  - Global distribution
+  - Ecological role
+  - Image management
+  - QR code
+
+### 3. Campus Management
+- Manage campus locations and information
+- Track species distribution across campuses
+
+### 4. Tree Location Management
+- Track and manage tree locations
+- Associate trees with specific campus areas
+
+### 5. Botany Management
+- Maintain botanical information
+- Link species with botanical classifications
+
+
+## Detailed Module Guides
+
+### Species Management Guide
+1. Accessing Species Management:
+   - Navigate to the Species section from the main menu
+   - View the list of all species in a table format
+
+2. Adding a New Species:
+   - Click the "Add New" button
+   - Fill in the required information:
+     - Tree name
+     - Scientific name
+     - Hindi name
+     - Center of origin
+     - Geographical distribution
+     - IUCN status
+   - Upload any relevant images
+   - QR code
+   - Set active status
+   - Save the entry
+
+3. Editing Species Information:
+   - Locate the species in the table
+   - Click the edit icon
+   - Modify the required fields
+   - Save changes
+
+4. Viewing Species Details:
+   - Click the view icon next to any species
+   - View complete information in a detailed view
+
+### Bird Management Guide
+1. Accessing Bird Management:
+   - Navigate to the Birds section
+   - View the list of all birds in a table format
+
+2. Adding a New Bird:
+   - Click the "Add New" button
+   - Fill in the required information:
+     - Bird name
+     - Scientific name
+     - Bird type
+     - IUCN status
+     - Migration status
+     - Food preferences
+     - Habitat preferences
+   - Upload bird images
+   - Set active status
+   - Save the entry
+
+3. Managing Bird Types:
+   - Access the Bird Types section
+   - Add or modify bird classifications
+   - Include Hindi translations where applicable
+
+## Common Operations
+
+### Search Functionality
+- Use the search bar to find specific entries
+- Search by name, scientific name, or other relevant fields
+- Clear search to view all entries
+
+
+## Troubleshooting
+
+### Common Issues and Solutions
+1. Data Not Loading:
+   - Check internet connection
+   - Refresh the page
+   - Clear browser cache
+
+2. Form Submission Issues:
+   - Verify all required fields are filled
+   - Check for valid data formats
+   - Ensure proper image file types
+
+3. Search Not Working:
+   - Verify search terms
+   - Check for special characters
+   - Try different search criteria
+
+### Support
+For technical support:
+- Contact the system administrator
+- Report issues through the designated channels
+- Provide detailed information about the problem
+
+## Best Practices
+1. Regular Data Updates:
+   - Keep information current
+   - Verify data accuracy
+   - Update status changes promptly
+
+2. Image Management:
+   - Use appropriate file formats
+   - Optimize image sizes
+   - Maintain consistent naming conventions
+
+3. Data Entry:
+   - Double-check information before saving
+   - Use consistent formatting
+   - Follow naming conventions
+
+## Security Guidelines
+1. Access Control:
+   - Use strong passwords
+   - Log out when finished
+   - Don't share credentials
+
+2. Data Protection:
+   - Handle sensitive information carefully
+   - Follow data protection guidelines
+   - Report security concerns immediately

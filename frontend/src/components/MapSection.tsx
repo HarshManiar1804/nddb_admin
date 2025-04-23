@@ -1,90 +1,52 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import "leaflet/dist/leaflet.css";
 import { useTreeData } from "@/contexts/TreeDataContext";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { X, Loader } from "lucide-react";
 import { Button } from "./ui/button";
-import { campusColors, MapType } from "@/utils/utils";
+import { campusColors } from "@/utils/utils";
 import L from "leaflet";
+import GeoTIFFLayer from "./GeoTiffLayer";
 
 const mapOptions = [
     { name: "satellite", url: "https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}" },
     { name: "hybrid", url: "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" },
     { name: "terrain", url: "https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}" },
 ];
-
-const GeoTIFFLayer: React.FC<{ setTiffLoading: (loading: boolean) => void }> = ({ setTiffLoading }) => {
-    const map = useMap();
-    const layerRef = useRef<L.TileLayer.WMS | null>(null);
-
-    // Your GeoServer WMS URL
-    const geoserverUrl = 'http://localhost:8080/geoserver/nddb/wms';
-
-    useEffect(() => {
-        // Set loading state to true before creating WMS layer
-        setTiffLoading(true);
-
-        // Create a WMS layer
-        const wmsLayer = L.tileLayer.wms(geoserverUrl, {
-            layers: 'nddb:output_cog',
-            format: 'image/png',
-            transparent: true,
-            version: '1.1.0',
-            attribution: "GeoServer WMS",
-            tileSize: 256,
-            detectRetina: true,
-        });
-
-        // Set up loading events
-        wmsLayer.on('loading', () => {
-            setTiffLoading(true);
-        });
-
-        wmsLayer.on('load', () => {
-            setTiffLoading(false);
-        });
-
-        // Set up error handling
-        wmsLayer.on('tileerror', (error) => {
-            console.error("Tile loading error:", error);
-            setTiffLoading(false);
-        });
-
-        if (layerRef.current) {
-            map.removeLayer(layerRef.current);
-        }
-
-        layerRef.current = wmsLayer;
-        wmsLayer.addTo(map);
-
-        // Set a timeout to handle cases where the 'load' event might not fire
-        const timeoutId = setTimeout(() => {
-            setTiffLoading(false);
-        }, 10000); // 10 seconds timeout
-
-        return () => {
-            clearTimeout(timeoutId);
-            if (layerRef.current) {
-                map.removeLayer(layerRef.current);
-            }
-        };
-    }, [map, setTiffLoading]);
-
-    return null;
-};
+interface MarkerIcons {
+    [key: number]: L.Icon | L.DivIcon;
+}
+interface MapType {
+    mapType: string;
+}
 
 const MapSection: React.FC<MapType> = ({ mapType }) => {
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const selectedMap = mapOptions.find((option) => option.name === mapType) || mapOptions[0];
-    const { treeCoordinates, clearTreeSelections } = useTreeData();
-    const [selectedTree, setSelectedTree] = useState<any | null>(null);
+
+    const { treeCoordinates } = useTreeData();
+    interface TreeDetails {
+        id: number;
+        treename: string;
+        scientificname?: string;
+        hindiname?: string;
+        treeimageurl?: string;
+        latitude: string;
+        longitude: string;
+        iucnstatus?: string;
+        centreoforigin?: string;
+        geographicaldistribution?: string;
+        link?: string;
+    }
+
+    const [selectedTree, setSelectedTree] = useState<TreeDetails | null>(null);
     const [loading, setLoading] = useState(false);
     const [markersLoading, setMarkersLoading] = useState(false);
     const [tiffLoading, setTiffLoading] = useState(true); // New state for GeoTIFF loading
     const [error, setError] = useState("");
-    const [markerIcons, setMarkerIcons] = useState<{ [key: number]: L.Icon }>({});
-    const [treeSpeciesMap, setTreeSpeciesMap] = useState<Map<string, number>>(new Map());
+    const [markerIcons, setMarkerIcons] = useState<{ [key: number]: L.Icon | L.DivIcon }>({});
     const [showMarkers, setShowMarkers] = useState(false);
+    const [processingProgress, setProcessingProgress] = useState(0); // Track progress percentage
     const cancelFetchRef = useRef(false);
 
     // Define the default icon once
@@ -113,10 +75,7 @@ const MapSection: React.FC<MapType> = ({ mapType }) => {
         cancelFetchRef.current = true;
         setMarkersLoading(false);
         setMarkerIcons({});
-        setTreeSpeciesMap(new Map());
-        if (typeof clearTreeSelections === 'function') {
-            clearTreeSelections();
-        }
+        setProcessingProgress(0);
     };
 
     useEffect(() => {
@@ -127,48 +86,71 @@ const MapSection: React.FC<MapType> = ({ mapType }) => {
             setMarkersLoading(true);
             setShowMarkers(false);
             setMarkerIcons({});
+            setProcessingProgress(0);
 
             const speciesMap = new Map<string, number>();
             let speciesCounter = 0;
-            const newIcons: { [key: number]: L.Icon } = {};
+            const newIcons: MarkerIcons = {};
+            const totalTrees = treeCoordinates.length;
 
-            const fetchPromises = treeCoordinates.map((tree, index) => {
-                const treeGeoID = tree.id; // Adjust index for API
+            // Process trees in batches with delay to prevent skipping
+            const processBatch = async (startIndex: number, batchSize: number) => {
+                if (cancelFetchRef.current) return;
 
-                return fetch(`${BACKEND_URL}/species/details/${treeGeoID}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (cancelFetchRef.current) return;
+                const endIndex = Math.min(startIndex + batchSize, totalTrees);
+                const promises = [];
 
-                        const speciesKey = data.scientificname || data.treename || 'unknown';
+                for (let i = startIndex; i < endIndex; i++) {
+                    const tree = treeCoordinates[i];
+                    const treeGeoID = tree.id;
 
-                        if (!speciesMap.has(speciesKey)) {
-                            speciesMap.set(speciesKey, speciesCounter++);
-                        }
+                    const promise = fetch(`${BACKEND_URL}/species/details/${treeGeoID}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (cancelFetchRef.current) return;
 
-                        const colorIndex = speciesMap.get(speciesKey)!;
-                        const color = campusColors[colorIndex];
-                        console.log("color to :", color)// fix applied here
+                            const speciesKey = data.scientificname || data.treename || 'unknown';
 
-                        newIcons[index] = createColoredIcon(color);
-                    })
-                    .catch(() => {
-                        if (cancelFetchRef.current) return;
-                        newIcons[index] = defaultIcon;
-                    });
-            });
+                            if (!speciesMap.has(speciesKey)) {
+                                speciesMap.set(speciesKey, speciesCounter++);
+                            }
 
-            await Promise.allSettled(fetchPromises);
+                            const colorIndex = speciesMap.get(speciesKey)!;
+                            const color = campusColors[colorIndex];
 
-            if (cancelFetchRef.current) {
-                setMarkersLoading(false);
-                return;
-            }
+                            newIcons[i] = createColoredIcon(color);
+                        })
+                        .catch(() => {
+                            if (cancelFetchRef.current) return;
+                            newIcons[i] = defaultIcon;
+                        });
 
-            setMarkerIcons(newIcons);
-            setTreeSpeciesMap(speciesMap);
-            setMarkersLoading(false);
-            setShowMarkers(true);
+                    promises.push(promise);
+                }
+
+                await Promise.allSettled(promises);
+
+                // Update progress
+                setProcessingProgress(Math.round((endIndex / totalTrees) * 100));
+
+                // If there are more trees to process, schedule the next batch
+                if (endIndex < totalTrees && !cancelFetchRef.current) {
+                    // Add a delay between batches to prevent overwhelming the browser
+                    await new Promise(resolve => setTimeout(resolve, 30));
+                    return processBatch(endIndex, batchSize);
+                } else {
+                    // All done or cancelled
+                    if (!cancelFetchRef.current) {
+                        setMarkerIcons(newIcons);
+                        setMarkersLoading(false);
+                        setShowMarkers(true);
+                    }
+                    return;
+                }
+            };
+
+            // Start processing in batches of 20 trees
+            await processBatch(0, 20);
         };
 
         fetchTreeSpecies();
@@ -189,24 +171,24 @@ const MapSection: React.FC<MapType> = ({ mapType }) => {
                 throw new Error(data.error || "Failed to fetch tree details");
             }
             setSelectedTree(data);
-        } catch (err: any) {
-            setError(err.message);
+        } catch {
+            setError("Failed to fetch tree details");
         } finally {
             setLoading(false);
         }
     };
 
     // Function to get correct position for tree markers
-    const getCorrectPosition = (tree: any): [number, number] => {
+    const getCorrectPosition = (tree: { latitude: number; longitude: number }): [number, number] => {
         // Check if the coordinates are in the correct format
         // Latitude should be between -90 and 90, Longitude between -180 and 180
-        const lat = parseFloat(tree.latitude);
-        const lng = parseFloat(tree.longitude);
+        const lat = tree.latitude;
+        const lng = tree.longitude;
 
         // If coordinates are swapped (which appears to be the case)
         if (lat > 90 || lat < -90 || lng > 180 || lng < -180) {
             // Swap lat and lng
-            return [parseFloat(tree.longitude), parseFloat(tree.latitude)];
+            return [tree.longitude, tree.latitude];
         }
 
         return [lat, lng];
@@ -242,7 +224,7 @@ const MapSection: React.FC<MapType> = ({ mapType }) => {
                             <Popup>
                                 <div>
                                     <strong>Tree Name:</strong> {tree.treename}<br />
-                                    <strong>Coordinates:</strong> {position[0].toFixed(5)}, {position[1].toFixed(5)}
+                                    <strong>Coordinates:</strong> {position[0]}, {position[1]}
                                 </div>
                             </Popup>
                         </Marker>
@@ -261,11 +243,17 @@ const MapSection: React.FC<MapType> = ({ mapType }) => {
 
             {/* Loading Overlay for markers */}
             {markersLoading && (
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center rounded-lg z-10">
+                <div className="absolute inset-0  bg-opacity-50 flex flex-col items-center justify-center rounded-lg z-10">
                     <div className="bg-white p-6 rounded-lg shadow-lg text-center">
                         <Loader className="h-12 w-12 mx-auto text-green-500 animate-spin mb-4" />
-                        <p className="text-lg font-medium text-gray-800">Loading Tree Markers...</p>
-                        <p className="text-sm text-gray-600 mt-2">Converting markers to display species information</p>
+                        <p className="text-lg font-medium text-gray-800">Loading Trees ...</p>
+                        <p className="text-sm text-gray-600 mt-2">Processing {processingProgress}% complete</p>
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 mt-3">
+                            <div
+                                className="bg-green-600 h-2.5 rounded-full"
+                                style={{ width: `${processingProgress}%` }}
+                            ></div>
+                        </div>
                     </div>
                 </div>
             )}

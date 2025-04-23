@@ -153,7 +153,7 @@ const SpeciesUsage = () => {
                 <div className="flex ">
                     <Input
                         type="text"
-                        className="w-full mr-2 w-64"
+                        className="mr-2 w-64"
                         placeholder="Search by species or title..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

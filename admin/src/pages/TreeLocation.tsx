@@ -43,7 +43,7 @@ interface TreeGeolocationFormData {
     latitude: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const TreeLocation = () => {
     const [geolocations, setGeolocations] = useState<TreeGeolocation[]>([]);
@@ -109,7 +109,7 @@ const TreeLocation = () => {
             reset();
             setSelectedSpeciesId('');
             fetchGeolocations();
-        } catch (error) {
+        } catch {
             toast.error('Failed to save geolocation');
         }
     }, [editGeolocation, fetchGeolocations, reset, selectedSpeciesId]);
@@ -121,7 +121,7 @@ const TreeLocation = () => {
             await axios.delete(`${API_URL}/trees-geolocation/${id}`);
             fetchGeolocations();
             toast.success('Geolocation deleted successfully');
-        } catch (error) {
+        } catch {
             toast.error('Failed to delete geolocation');
         }
     }, [fetchGeolocations]);
