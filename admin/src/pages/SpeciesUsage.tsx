@@ -37,7 +37,7 @@ interface SpeciesUsage {
 
 interface SpeciesUsageFormData {
     speciesId: string;
-    UsageTitle: string;
+    usagetitle: string;
     usagedescription: string;
 }
 
@@ -116,7 +116,7 @@ const SpeciesUsage = () => {
     const handleEdit = (usage: SpeciesUsage) => {
         setEditingSpeciesUsage(usage);
         setSelectedSpeciesId(usage.speciesid);
-        setValue('UsageTitle', usage.usagetitle);
+        setValue('usagetitle', usage.usagetitle);
         setValue('usagedescription', usage.usagedescription);
         setIsDrawerOpen(true);
     };
@@ -137,7 +137,7 @@ const SpeciesUsage = () => {
     const filteredSpeciesUsages = speciesUsages.filter((item) => {
         const speciesName = species.find(s => s.id === item.speciesid)?.treename || '';
         return (
-            item.usagetitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.usagetitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             speciesName.toLowerCase().includes(searchTerm.toLowerCase())
         );
     });
@@ -190,19 +190,19 @@ const SpeciesUsage = () => {
                                         {!selectedSpeciesId && <p className="text-sm text-red-500">Species is required</p>}
                                     </div>
                                     <div>
-                                        <Label htmlFor="UsageTitle">Usage Title</Label>
+                                        <Label htmlFor="usagetitle">Usage Title</Label>
                                         <Input
-                                            id="UsageTitle"
-                                            {...register("UsageTitle", { required: "Usage title is required" })}
+                                            id="usagetitle"
+                                            {...register("usagetitle", { required: "Usage title is required" })}
                                             placeholder="Enter usage title"
                                         />
-                                        {errors.UsageTitle && <p className="text-sm text-red-500">{errors.UsageTitle.message}</p>}
+                                        {errors.usagetitle && <p className="text-sm text-red-500">{errors.usagetitle.message}</p>}
                                     </div>
                                     <div>
-                                        <Label htmlFor="UsageDescription">Usage Description</Label>
+                                        <Label htmlFor="usagedescription">Usage Description</Label>
                                         <Textarea
-                                            id="UsageDescription"
-                                            {...register("UsageDescription")}
+                                            id="usagedescription"
+                                            {...register("usagedescription")}
                                             placeholder="Enter usage description"
                                             rows={5}
                                         />

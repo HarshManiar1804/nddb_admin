@@ -1,17 +1,29 @@
+// controllers/birdController.js
 const db = require("../config/db");
 
 // Get all birds (simplified to focus on Birds table)
 const getAllBirds = async (req, res) => {
   try {
-    const result = await db.query(`
-      SELECT 
-      bt.Type AS bird_type_name,
-          b.*
-      FROM 
-          Birds b
-      LEFT JOIN 
-          birds_type bt ON b.birds_type = bt.Id
-  `);
+    const result = await db.query("SELECT * FROM Birds");
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error fetching birds:", error);
+    res.status(500).json({ error: "Failed to fetch birds" });
+  }
+};
+
+// Get all birds (with option to include inactive birds)
+const getAllBirdsWithFilter = async (req, res) => {
+  try {
+    const { showInactive } = req.query;
+
+    let query = "SELECT * FROM Birds";
+    if (showInactive !== "true") {
+      query += " WHERE IsActive = true";
+    }
+    query += " ORDER BY BirdName";
+
+    const result = await db.query(query);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error fetching birds:", error);
@@ -21,7 +33,7 @@ const getAllBirds = async (req, res) => {
 
 // Get a specific bird by ID (without joining BirdTypes)
 const getBirdById = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   try {
     const result = await db.query("SELECT * FROM Birds WHERE Id = $1", [id]);
@@ -58,10 +70,10 @@ const createBird = async (req, res) => {
 
   try {
     const result = await db.query(
-      `INSERT INTO Birds (
-        BirdName, ScientificName, birds_type, IUCNStatus, MigrationStatus, 
-        FoodPreference, HabitatPreference, GlobalDistribution, EcologicalRole, 
-        BirdImage, URLLink, Coordinates, IsActive, QRCode
+      `INSERT INTO birds (
+        birdname, scientificname, birds_type, iucnstatus, migrationstatus, 
+        foodpreference, habitatpreference, globaldistribution, ecologicalrole, 
+        birdimage, urllink, coordinates, isactive, qrcode
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *`,
       [
         birdname,
@@ -89,8 +101,9 @@ const createBird = async (req, res) => {
 };
 
 // Update a bird
+// Update a bird
 const updateBird = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const {
     birdname,
     scientificname,
@@ -109,7 +122,8 @@ const updateBird = async (req, res) => {
   } = req.body;
 
   try {
-    const checkResult = await db.query("SELECT * FROM Birds WHERE Id = $1", [
+    // First check if bird exists
+    const checkResult = await db.query("SELECT * FROM birds WHERE id = $1", [
       id,
     ]);
 
@@ -118,22 +132,22 @@ const updateBird = async (req, res) => {
     }
 
     const result = await db.query(
-      `UPDATE Birds SET 
-        BirdName = $1, 
-        ScientificName = $2, 
+      `UPDATE birds SET 
+        birdname = $1, 
+        scientificname = $2, 
         birds_type = $3, 
-        IUCNStatus = $4, 
-        MigrationStatus = $5,
-        FoodPreference = $6, 
-        HabitatPreference = $7, 
-        GlobalDistribution = $8, 
-        EcologicalRole = $9,
-        BirdImage = $10, 
-        URLLink = $11, 
-        Coordinates = $12, 
-        IsActive = $13, 
-        QRCode = $14
-      WHERE Id = $15 RETURNING *`,
+        iucnstatus = $4, 
+        migrationstatus = $5,
+        foodpreference = $6, 
+        habitatpreference = $7, 
+        globaldistribution = $8, 
+        ecologicalrole = $9,
+        birdimage = $10, 
+        urllink = $11, 
+        coordinates = $12, 
+        isactive = $13, 
+        qrcode = $14
+      WHERE id = $15 RETURNING *`,
       [
         birdname,
         scientificname,
@@ -147,7 +161,7 @@ const updateBird = async (req, res) => {
         birdimage,
         urllink,
         coordinates,
-        isactive,
+        isactive ?? true,
         qrcode,
         id,
       ]
@@ -162,9 +176,10 @@ const updateBird = async (req, res) => {
 
 // Delete a bird
 const deleteBird = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   try {
+    // First check if bird exists
     const checkResult = await db.query("SELECT * FROM Birds WHERE Id = $1", [
       id,
     ]);
@@ -181,14 +196,40 @@ const deleteBird = async (req, res) => {
   }
 };
 
-// Get birds by type
-const getBirdsByType = async (req, res) => {
-  const typeid = req.params.typeid;
+// Set bird active status
+const setBirdActiveStatus = async (req, res) => {
+  const { id } = req.params;
+  const { IsActive } = req.body;
+
+  if (IsActive === undefined) {
+    return res.status(400).json({ error: "IsActive status is required" });
+  }
 
   try {
     const result = await db.query(
-      "SELECT * FROM Birds WHERE birds_type = $1 ORDER BY BirdName",
-      [typeid]
+      "UPDATE Birds SET IsActive = $1 WHERE Id = $2 RETURNING *",
+      [IsActive, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Bird not found" });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating bird active status:", error);
+    res.status(500).json({ error: "Failed to update bird active status" });
+  }
+};
+
+// Get birds by type
+const getBirdsByType = async (req, res) => {
+  const { typeId } = req.params;
+
+  try {
+    const result = await db.query(
+      "SELECT * FROM Birds WHERE BirdType = $1 ORDER BY BirdName",
+      [typeId]
     );
 
     res.status(200).json(result.rows);
@@ -198,11 +239,40 @@ const getBirdsByType = async (req, res) => {
   }
 };
 
+// Search birds
+const searchBirds = async (req, res) => {
+  const { query } = req.query;
+
+  if (!query) {
+    return res.status(400).json({ error: "Search query is required" });
+  }
+
+  try {
+    const result = await db.query(
+      `SELECT * FROM Birds 
+       WHERE BirdName ILIKE $1 
+       OR ScientificName ILIKE $1
+       OR IUCNStatus ILIKE $1
+       OR MigrationStatus ILIKE $1
+       ORDER BY BirdName`,
+      [`%${query}%`]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error searching birds:", error);
+    res.status(500).json({ error: "Failed to search birds" });
+  }
+};
+
 module.exports = {
   getAllBirds,
+  getAllBirdsWithFilter,
   getBirdById,
   createBird,
   updateBird,
   deleteBird,
+  setBirdActiveStatus,
   getBirdsByType,
+  searchBirds,
 };

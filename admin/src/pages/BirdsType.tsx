@@ -44,7 +44,7 @@ const BirdTypes = () => {
     const fetchBirdTypes = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await axios.get(`${API_URL}/birds-type`);
+            const response = await axios.get(`${API_URL}/bird-types`);
             setBirdTypes(response.data);
         } catch (error) {
             console.error('Error fetching bird types:', error);
@@ -59,10 +59,10 @@ const BirdTypes = () => {
             if (editingBirdType) {
                 const confirmUpdate = window.confirm('Are you sure you want to update this bird type?');
                 if (!confirmUpdate) return;
-                await axios.put(`${API_URL}/birds-type/${editingBirdType.id}`, data);
+                await axios.put(`${API_URL}/bird-types/${editingBirdType.id}`, data);
                 toast.success('Bird type updated successfully');
             } else {
-                await axios.post(`${API_URL}/birds-type`, data);
+                await axios.post(`${API_URL}/bird-types`, data);
                 toast.success('Bird type added successfully');
             }
             setIsDrawerOpen(false);
@@ -77,7 +77,7 @@ const BirdTypes = () => {
         const confirmDelete = window.confirm('Are you sure you want to delete this bird type?');
         if (!confirmDelete) return;
         try {
-            await axios.delete(`${API_URL}/birds-type/${id}`);
+            await axios.delete(`${API_URL}/bird-types/${id}`);
             fetchBirdTypes();
             toast.success('Bird type deleted successfully');
         } catch (error: any) {

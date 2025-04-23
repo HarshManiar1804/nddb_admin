@@ -57,7 +57,7 @@ exports.getSpeciesUsageById = async (req, res, next) => {
  */
 exports.createSpeciesUsage = async (req, res, next) => {
   try {
-    const { speciesId, UsageTitle, UsageDescription } = req.body;
+    const { speciesId, usagetitle, usagedescription } = req.body;
 
     // Validate required fields
     if (!speciesId) {
@@ -78,8 +78,8 @@ exports.createSpeciesUsage = async (req, res, next) => {
 
     const result = await db.insert("Species_Usage", {
       speciesId,
-      UsageTitle,
-      UsageDescription,
+      usagetitle,
+      usagedescription,
     });
 
     res.status(201).json({
@@ -99,7 +99,7 @@ exports.createSpeciesUsage = async (req, res, next) => {
  */
 exports.updateSpeciesUsage = async (req, res, next) => {
   try {
-    const { speciesId, UsageTitle, UsageDescription } = req.body;
+    const { speciesId, usagetitle, usagedescription } = req.body;
     const usageId = req.params.id;
 
     // Check if species usage exists
@@ -127,9 +127,9 @@ exports.updateSpeciesUsage = async (req, res, next) => {
       usageData.speciesId = speciesId;
     }
 
-    if (UsageTitle !== undefined) usageData.UsageTitle = UsageTitle;
-    if (UsageDescription !== undefined)
-      usageData.UsageDescription = UsageDescription;
+    if (usagetitle !== undefined) usageData.usagetitle = usagetitle;
+    if (usagedescription !== undefined)
+      usageData.usagedescription = usagedescription;
 
     const result = await db.update("Species_Usage", usageId, usageData);
 

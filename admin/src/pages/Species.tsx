@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import {
     Table,
     TableBody,
@@ -84,7 +84,7 @@ const Species = () => {
 
 
 
-    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<SpeciesFormData>();
+    const { register, handleSubmit, reset, setValue, control, formState: { errors } } = useForm<SpeciesFormData>();
 
     useEffect(() => {
         fetchSpecies();
@@ -213,7 +213,7 @@ const Species = () => {
     }
 
     return (
-        <div className='w-[1200px]'>
+        <div className='w-full max-w-6xl'>
             <div className="flex items-center justify-between ">
                 <h2 className="text-2xl font-bold">Species Management</h2>
                 <div className="my-4 flex items-center gap-4">
@@ -363,9 +363,16 @@ const Species = () => {
 
                                         <div className="flex items-center space-x-2">
                                             <Label htmlFor="isactive">Active Status</Label>
-                                            <Switch
-                                                id="isactive"
-                                                {...register("isactive")}
+                                            <Controller
+                                                name="isactive"
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <Switch
+                                                        id="isactive"
+                                                        checked={field.value}
+                                                        onCheckedChange={field.onChange}
+                                                    />
+                                                )}
                                             />
                                         </div>
                                     </div>
