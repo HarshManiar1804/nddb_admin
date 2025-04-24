@@ -238,7 +238,7 @@ const TreeDataViewer: React.FC = () => {
 
             <div className="mt-4 pt-4 border-t border-gray-200">
                 <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>{selectedBotany.length} botany </span>
+                    <span>{selectedBotany.length} families </span>
                     <span>{selectedSpecies.length} species </span>
                 </div>
             </div>
