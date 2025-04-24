@@ -1,4 +1,4 @@
-# NDDB Admin Project
+# NDDB Project
 
 A comprehensive management system for the National Dairy Development Board (NDDB), focusing on species, bird, and campus management.
 
@@ -18,11 +18,12 @@ nddb_admin/
 ## Features
 
 ### Admin Dashboard
+
 - Species Management
   - Tree species information
   - Scientific and Hindi names
   - IUCN status tracking
-  - QR code 
+  - QR code
 - Bird Management
   - Comprehensive bird data
   - Migration status
@@ -41,6 +42,7 @@ nddb_admin/
 ## Tech Stack
 
 ### Frontend
+
 - React
 - TypeScript
 - Vite
@@ -48,6 +50,7 @@ nddb_admin/
 - Radix UI Components
 
 ### Backend
+
 - Node.js
 - Express.js
 - PostgreSQL Database
@@ -62,12 +65,14 @@ nddb_admin/
 ## Installation
 
 1. Clone the repository:
+
 ```bash
 git clone [repository-url]
 cd nddb_admin
 ```
 
 2. Install dependencies for each component:
+
 ```bash
 # Install admin dependencies
 cd admin
@@ -87,23 +92,24 @@ npm install
    - Configure database connection strings
    - Set up API endpoints
 
-
-
 ## Development
 
 ### Running the Admin Panel
+
 ```bash
 cd admin
 npm run dev
 ```
 
 ### Running the Backend
+
 ```bash
 cd backend
 npm run dev
 ```
 
 ### Running the Frontend
+
 ```bash
 cd frontend
 npm run dev
@@ -112,10 +118,12 @@ npm run dev
 ## Available Scripts
 
 ### Admin Panel
+
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 
 ### Backend
+
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run start` - Start production server
@@ -124,6 +132,7 @@ npm run dev
 ## API Documentation
 
 The backend API provides endpoints for:
+
 - Species management
 - Bird data management
 - Campus information
@@ -147,6 +156,7 @@ Detailed API documentation is available in the backend directory.
 ## Support
 
 For support, please contact:
+
 - Email: [support email]
 - Documentation: [documentation link]
 - Issue Tracker: [issue tracker link]
