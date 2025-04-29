@@ -253,7 +253,7 @@ const BirdsSection = ({ mapType = "satellite" }) => {
                             <Popup>
                                 <div className="bg-white p-2 rounded shadow-sm">
                                     <strong>Bird Name:</strong> {bird.birdname}<br />
-                                    <strong>Type:</strong> {bird.bird_type_name}<br />
+
                                     <strong>Scientific Name:</strong> {bird.scientificname}
                                 </div>
                             </Popup>
